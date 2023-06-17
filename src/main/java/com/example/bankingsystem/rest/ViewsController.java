@@ -3,9 +3,12 @@ package com.example.bankingsystem.rest;
 import com.example.bankingsystem.service.ViewsService;
 import com.example.bankingsystem.views.*;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -53,11 +56,28 @@ public class ViewsController {
 //        return "all-account-transactions";
     }
 
+    @PostMapping("/addAccount")
+    public String addCustomer(@RequestParam String accountType, @RequestParam double amount,
+                              @RequestParam String embg, @RequestParam String currencyCode,
+                              @RequestParam int branchId) {
+        viewsService.addAccount(accountType, amount, embg, currencyCode, branchId);
+        return "redirect:/accounts";
+    }
+
     @GetMapping("/customerInfo")
     public List<Customerinfo> getCustomerInfo() {
         return viewsService.getCustomerInfo();
 //        model.addAttribute("transactions", viewsService.getAllAccountTransactions());
 //        return "all-account-transactions";
+    }
+
+    @PostMapping("/addCustomer")
+    public String addCustomer(@RequestParam String embg, @RequestParam String firstName,
+                              @RequestParam String lastName, @RequestParam LocalDate dob,
+                              @RequestParam String city, @RequestParam String address,
+                              @RequestParam String email, @RequestParam String phoneNumber) {
+        viewsService.addCustomer(embg, firstName, lastName, dob, city, address, email, phoneNumber);
+        return "redirect:/customers";
     }
 
     @GetMapping("/employeeContactInfo")
@@ -88,5 +108,7 @@ public class ViewsController {
 //        return "all-account-transactions";
     }
 
+//    @PostMapping("")
+//    public String
 
 }

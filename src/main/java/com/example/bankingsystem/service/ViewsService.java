@@ -2,15 +2,21 @@ package com.example.bankingsystem.service;
 
 import com.example.bankingsystem.views.*;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.core.ApplicationContext;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.time.LocalDate;
+import java.sql.Date;
 import java.util.List;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class ViewsService {
 
     private final JdbcTemplate jdbcTemplate;
@@ -185,6 +191,42 @@ public class ViewsService {
             data.setRatehistoryfrom(rs.getDate("ratehistoryfrom"));
             data.setRatehistoryto(rs.getDate("ratehistoryto"));
             return data;
+        });
+    }
+
+    // PORCEDURI - NE RABOTAT
+    public void addCustomer(String embg, String firstName, String lastName, LocalDate dob, String city, String address, String email, String phoneNumber) {
+        jdbcTemplate.execute((ConnectionCallback<Object>) connection -> {
+            log.info("{}", dob);
+            log.info("{}", phoneNumber);
+
+            CallableStatement callableStatement = connection.prepareCall("{call addcustomer(?, ?, ?, ?, ?, ?, ?, ?)}");
+            callableStatement.setString(1, embg);
+            callableStatement.setString(2, firstName);
+            callableStatement.setString(3, lastName);
+            callableStatement.setDate(4, Date.valueOf(dob));
+            callableStatement.setString(5, city);
+            callableStatement.setString(6, address);
+            callableStatement.setString(7, email);
+            callableStatement.setString(8, phoneNumber);
+            callableStatement.execute();
+            log.info("Customer added");
+            return null;
+        });
+    }
+
+    public void addAccount(String accountType, double amount, String embg, String currencyCode, int branchId) {
+        jdbcTemplate.execute((ConnectionCallback<Object>) connection -> {
+
+            CallableStatement callableStatement = connection.prepareCall("{call addaccount(?, ?, ?, ?, ?)}");
+            callableStatement.setString(1, accountType);
+            callableStatement.setDouble(2, amount);
+            callableStatement.setString(3, embg);
+            callableStatement.setString(4, currencyCode);
+            callableStatement.setInt(5, branchId);
+            callableStatement.execute();
+            log.info("Account added");
+            return null;
         });
     }
 }
