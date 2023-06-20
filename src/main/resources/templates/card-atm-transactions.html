@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <title>All Account Transactions</title>
+    <title>Card ATM Transactions</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
@@ -10,7 +10,7 @@
 <body>
 
     <div class="container">
-        <h1>Account Transactions for Account Number: <span th:text="${accountNumber}"></span> (EMBG: <span th:text="${customerEMBG}"></span>)</h1>
+        <h1>ATM Transactions for Card </h1>
         <table class="table table-bordered">
             <thead>
             <tr>
@@ -18,22 +18,18 @@
                 <th>Type</th>
                 <th>Date</th>
                 <th>Amount</th>
-                <th>Currency Code</th>
-                <th>Account From</th>
-                <th>Account To</th>
-                <th>Transaction Category</th>
+                <th>Card ID</th>
+                <th>Account Transaction ID</th>
             </tr>
             </thead>
             <tbody>
-            <tr th:each="transaction : ${accountTransactions}">
+            <tr th:each="transaction : ${cardTransactions}">
                 <td th:text="${transaction.transactionid}"></td>
                 <td th:text="${transaction.type}"></td>
                 <td th:text="${transaction.date}"></td>
                 <td th:text="${transaction.amount}"></td>
-                <td th:text="${transaction.currencycode}"></td>
-                <td th:text="${transaction.accountfrom}"></td>
-                <td th:text="${transaction.accountto}"></td>
-                <td th:text="${transaction.transactioncategory}"></td>
+                <td th:text="${transaction.cardid}"></td>
+                <td th:text="${transaction.accounttransactionid}"></td>
             </tr>
             </tbody>
         </table>

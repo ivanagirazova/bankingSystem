@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Exchange Rates Today</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Exchange Rates for Today</h1>
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>Exchange Rate ID</th>
+                <th>Date</th>
+                <th>Exchange Rate</th>
+                <th>Base Currency Code</th>
+                <th>Base Currency Name</th>
+                <th>Currency Code</th>
+                <th>Currency Name</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Loop through exchange rates -->
+            <tr th:each="exchangeRate : ${exchangeRates}">
+                <td th:text="${exchangeRate.exchangerateid}"></td>
+                <td th:text="${exchangeRate.date}"></td>
+                <td th:text="${exchangeRate.exchangerate}"></td>
+                <td th:text="${exchangeRate.basecurrencycode}"></td>
+                <td th:text="${exchangeRate.basecurrencyname}"></td>
+                <td th:text="${exchangeRate.currencycode}"></td>
+                <td th:text="${exchangeRate.currencyname}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>

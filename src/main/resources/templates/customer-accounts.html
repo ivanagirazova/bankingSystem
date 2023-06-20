@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Customer Accounts</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Accounts For Customer </h1>
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>Account ID</th>
+                <th>Account Number</th>
+                <th>Account Type</th>
+                <th>Balance</th>
+                <th>Card ID</th>
+                <th>Card Number</th>
+                <th>Card Type</th>
+                <th>Expiration Date</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="account : ${customerAccounts}">
+                <td th:text="${account.accountid}"></td>
+                <td th:text="${account.accountnumber}"></td>
+                <td th:text="${account.accounttype}"></td>
+                <td th:text="${account.balance}"></td>
+                <td th:text="${account.cardid}"></td>
+                <td th:text="${account.cardnumber}"></td>
+                <td th:text="${account.cardtype}"></td>
+                <td th:text="${account.expiredate}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>

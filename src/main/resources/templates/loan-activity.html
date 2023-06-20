@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Loan Activity</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Loan Activity for Loan </h1>
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>Transaction ID</th>
+                <th>Transaction Date</th>
+                <th>Transaction Amount</th>
+                <th>Principal Amount</th>
+                <th>Interest Amount</th>
+                <th>Amount Borrowed</th>
+                <th>Amount Owed</th>
+                <th>Interest Rate</th>
+                <th>Is Fixed Rate</th>
+                <th>Interest Type</th>
+                <th>Rate Effective From</th>
+                <th>Rate Effective To</th>
+                <th>Rate History From</th>
+                <th>Rate History To</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Loop through loan activity -->
+            <tr th:each="activity : ${loanActivity}">
+                <td th:text="${activity.transactionid}"></td>
+                <td th:text="${activity.transactiondate}"></td>
+                <td th:text="${activity.transactionamount}"></td>
+                <td th:text="${activity.principalamount}"></td>
+                <td th:text="${activity.interestamount}"></td>
+                <td th:text="${activity.amountborrowed}"></td>
+                <td th:text="${activity.amountowed}"></td>
+                <td th:text="${activity.interestrate}"></td>
+                <td th:text="${activity.isfixedrate}"></td>
+                <td th:text="${activity.interesttype}"></td>
+                <td th:text="${activity.rateeffectivefrom}"></td>
+                <td th:text="${activity.rateeffectiveto}"></td>
+                <td th:text="${activity.ratehistoryfrom}"></td>
+                <td th:text="${activity.ratehistoryto}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>
