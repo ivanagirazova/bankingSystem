@@ -4,6 +4,7 @@ import com.example.bankingsystem.service.ViewsService;
 import com.example.bankingsystem.views.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,7 +12,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/bankingSystem")
 @AllArgsConstructor
 public class ViewsController {
@@ -36,10 +37,9 @@ public class ViewsController {
     }
 
     @GetMapping("/branchEmployees")
-    public List<Branchemployees> getBranchEmployees() {
-        return viewsService.getBranchEmployees();
-//        model.addAttribute("transactions", viewsService.getAllAccountTransactions());
-//        return "all-account-transactions";
+    public String getBranchEmployees(@RequestParam int branchId, Model model) {
+        model.addAttribute("employees", viewsService.getBranchEmployees(branchId));
+        return "branch-employees";
     }
 
     @GetMapping("/cardAtmTransactions")
@@ -60,7 +60,7 @@ public class ViewsController {
     public String addCustomer(@RequestParam String accountType, @RequestParam double amount,
                               @RequestParam String embg, @RequestParam String currencyCode,
                               @RequestParam int branchId) {
-        viewsService.addAccount(accountType, amount, embg, currencyCode, branchId);
+//        viewsService.addAccount(accountType, amount, embg, currencyCode, branchId);
         return "redirect:/accounts";
     }
 
@@ -76,7 +76,7 @@ public class ViewsController {
                               @RequestParam String lastName, @RequestParam LocalDate dob,
                               @RequestParam String city, @RequestParam String address,
                               @RequestParam String email, @RequestParam String phoneNumber) {
-        viewsService.addCustomer(embg, firstName, lastName, dob, city, address, email, phoneNumber);
+//        viewsService.addCustomer(embg, firstName, lastName, dob, city, address, email, phoneNumber);
         return "redirect:/customers";
     }
 

@@ -3,15 +3,10 @@ package com.example.bankingsystem.service;
 import com.example.bankingsystem.views.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.core.ApplicationContext;
-import org.springframework.jdbc.core.ConnectionCallback;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.time.LocalDate;
-import java.sql.Date;
 import java.util.List;
 
 @Service
@@ -19,7 +14,7 @@ import java.util.List;
 @Slf4j
 public class ViewsService {
 
-    private final JdbcTemplate jdbcTemplate;
+    private final NamedParameterJdbcTemplate jdbcTemplate;
 
     public List<Allaccounttransactions> getAllAccountTransactions() {
         String sql = "SELECT * FROM public.allaccounttransactions;";
@@ -39,9 +34,9 @@ public class ViewsService {
     }
 
     //    CALL AddEmployeeToBranch('Cashier', FALSE, NULL, 1, '2102968450017');
-    public void addEmployeeToBranch(String jobTitle, boolean isManager, int managedBy, int branchId, int employeeEmbg) {
-        jdbcTemplate.update("CALL addemployeetobranch(?, ?, ?, ?, ?)", jobTitle, isManager, managedBy, branchId, employeeEmbg);
-    }
+//    public void addEmployeeToBranch(String jobTitle, boolean isManager, int managedBy, int branchId, int employeeEmbg) {
+//        jdbcTemplate.update("CALL addemployeetobranch(?, ?, ?, ?, ?)", jobTitle, isManager, managedBy, branchId, employeeEmbg);
+//    }
 
     public List<Branchandatmlocations> getBranchAndAtmLocations() {
         String sql = "SELECT * FROM public.branchandatmlocations;";
@@ -54,9 +49,22 @@ public class ViewsService {
         });
     }
 
-    public List<Branchemployees> getBranchEmployees() {
-        String sql = "SELECT * FROM public.branchemployees;";
-        return jdbcTemplate.query(sql, (rs, rowNum) -> {
+    public List<Branchemployees> getBranchEmployees(Integer branchId) {
+        String sql = "SELECT br.id  AS branchid,\n" +
+                     "       emp.id AS employeeid,\n" +
+                     "       emp.jobtitle,\n" +
+                     "       emp.ismanager,\n" +
+                     "       usr.firstname,\n" +
+                     "       usr.lastname,\n" +
+                     "       usr.email,\n" +
+                     "       usr.phonenumber\n" +
+                     "FROM employee emp\n" +
+                     "         JOIN \"User\" usr ON emp.userid = usr.id\n" +
+                     "         JOIN branch br ON emp.branchid = br.id\n" +
+                     "WHERE br.id = :branchId;";
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("branchId", branchId);
+        return jdbcTemplate.query(sql, params, (rs, rowNum) -> {
             Branchemployees data = new Branchemployees();
             data.setBranchid(rs.getLong("branchid"));
             data.setEmployeeid(rs.getLong("employeeid"));
@@ -195,38 +203,38 @@ public class ViewsService {
     }
 
     // PORCEDURI - NE RABOTAT
-    public void addCustomer(String embg, String firstName, String lastName, LocalDate dob, String city, String address, String email, String phoneNumber) {
-        jdbcTemplate.execute((ConnectionCallback<Object>) connection -> {
-            log.info("{}", dob);
-            log.info("{}", phoneNumber);
-
-            CallableStatement callableStatement = connection.prepareCall("{call addcustomer(?, ?, ?, ?, ?, ?, ?, ?)}");
-            callableStatement.setString(1, embg);
-            callableStatement.setString(2, firstName);
-            callableStatement.setString(3, lastName);
-            callableStatement.setDate(4, Date.valueOf(dob));
-            callableStatement.setString(5, city);
-            callableStatement.setString(6, address);
-            callableStatement.setString(7, email);
-            callableStatement.setString(8, phoneNumber);
-            callableStatement.execute();
-            log.info("Customer added");
-            return null;
-        });
-    }
-
-    public void addAccount(String accountType, double amount, String embg, String currencyCode, int branchId) {
-        jdbcTemplate.execute((ConnectionCallback<Object>) connection -> {
-
-            CallableStatement callableStatement = connection.prepareCall("{call addaccount(?, ?, ?, ?, ?)}");
-            callableStatement.setString(1, accountType);
-            callableStatement.setDouble(2, amount);
-            callableStatement.setString(3, embg);
-            callableStatement.setString(4, currencyCode);
-            callableStatement.setInt(5, branchId);
-            callableStatement.execute();
-            log.info("Account added");
-            return null;
-        });
-    }
+//    public void addCustomer(String embg, String firstName, String lastName, LocalDate dob, String city, String address, String email, String phoneNumber) {
+//        jdbcTemplate.execute((ConnectionCallback<Object>) connection -> {
+//            log.info("{}", dob);
+//            log.info("{}", phoneNumber);
+//
+//            CallableStatement callableStatement = connection.prepareCall("{call addcustomer(?, ?, ?, ?, ?, ?, ?, ?)}");
+//            callableStatement.setString(1, embg);
+//            callableStatement.setString(2, firstName);
+//            callableStatement.setString(3, lastName);
+//            callableStatement.setDate(4, Date.valueOf(dob));
+//            callableStatement.setString(5, city);
+//            callableStatement.setString(6, address);
+//            callableStatement.setString(7, email);
+//            callableStatement.setString(8, phoneNumber);
+//            callableStatement.execute();
+//            log.info("Customer added");
+//            return null;
+//        });
+//    }
+//
+//    public void addAccount(String accountType, double amount, String embg, String currencyCode, int branchId) {
+//        jdbcTemplate.execute((ConnectionCallback<Object>) connection -> {
+//
+//            CallableStatement callableStatement = connection.prepareCall("{call addaccount(?, ?, ?, ?, ?)}");
+//            callableStatement.setString(1, accountType);
+//            callableStatement.setDouble(2, amount);
+//            callableStatement.setString(3, embg);
+//            callableStatement.setString(4, currencyCode);
+//            callableStatement.setInt(5, branchId);
+//            callableStatement.execute();
+//            log.info("Account added");
+//            return null;
+//        });
+//    }
 }
