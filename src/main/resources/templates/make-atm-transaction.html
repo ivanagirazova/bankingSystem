@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <title>Make ATM Transaction</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Make ATM Transaction</h2>
+    <form action="/make-atm-transaction" method="post">
+      <div class="form-group">
+        <label for="p_Type">Transaction Type:</label>
+        <input type="text" class="form-control" id="p_Type" name="p_Type" required>
+      </div>
+      <div class="form-group">
+        <label for="p_CardNumber">Card Number:</label>
+        <input type="text" class="form-control" id="p_CardNumber" name="p_CardNumber" required>
+      </div>
+      <div class="form-group">
+        <label for="p_CCV">CCV:</label>
+        <input type="password" class="form-control" id="p_CCV" name="p_CCV" required>
+      </div>
+      <div class="form-group">
+        <label for="p_AtmId">ATM ID:</label>
+        <input type="number" class="form-control" id="p_AtmId" name="p_AtmId" required>
+      </div>
+      <div class="form-group">
+        <label for="p_Amount">Amount:</label>
+        <input type="number" step="0.01" class="form-control" id="p_Amount" name="p_Amount" required>
+      </div>
+      <div class="form-group">
+        <label for="p_CurrencyIdOfUser">Currency ID of User:</label>
+        <input type="number" class="form-control" id="p_CurrencyIdOfUser" name="p_CurrencyIdOfUser" required>
+      </div>
+      </br>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+
+</body>
+</html>
