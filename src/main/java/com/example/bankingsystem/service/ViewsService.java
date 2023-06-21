@@ -16,9 +16,38 @@ public class ViewsService {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    public List<Allaccounttransactions> getAllAccountTransactions() {
-        String sql = "SELECT * FROM public.allaccounttransactions;";
-        return jdbcTemplate.query(sql, (rs, rowNum) -> {
+    public List<Allaccounttransactions> getAllAccountTransactions(int accountId) {
+        String sql = """
+                SELECT a.id   AS accountid,
+                       at.id  AS transactionid,
+                       at.type,
+                       at."Date",
+                       at.amount,
+                       c.code AS currencycode,
+                       at.accountfrom,
+                       at.accountto
+                FROM accounttransaction at
+                         JOIN currency c ON at.currencyid = c.id
+                         JOIN account a ON at.accountfrom = a.id OR at.accountto = a.id
+                         JOIN customer cust ON a.customerid = cust.id
+                UNION ALL
+                SELECT a.id          AS accountid,
+                       lt.id         AS transactionid,
+                       'Loan'::text  AS type,
+                       lt."Date",
+                       lt.amount,
+                       'MKD'::bpchar AS currencycode,
+                       lt.accountfrom,
+                       l.accountid   AS accountto
+                FROM loantransaction lt
+                         JOIN loan l ON lt.loanid = l.id
+                         JOIN account a ON lt.accountfrom = a.id
+                         JOIN customer cust ON a.customerid = cust.id
+                WHERE a.id = :accountId;
+                """;
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("accountId", accountId);
+        return jdbcTemplate.query(sql, params, (rs, rowNum) -> {
             Allaccounttransactions data = new Allaccounttransactions();
             data.setAccountid(rs.getLong("accountid"));
             data.setTransactionid(rs.getLong("transactionid"));
@@ -39,7 +68,17 @@ public class ViewsService {
 //    }
 
     public List<Branchandatmlocations> getBranchAndAtmLocations() {
-        String sql = "SELECT * FROM public.branchandatmlocations;";
+        String sql = """
+                SELECT 'Branch'::text AS locationtype,
+                        branch.id      AS locationid,
+                        branch.address
+                 FROM branch
+                 UNION ALL
+                 SELECT 'ATM'::text AS locationtype,
+                        atm.id      AS locationid,
+                        atm.address
+                 FROM atm;
+                 """;
         return jdbcTemplate.query(sql, (rs, rowNum) -> {
             Branchandatmlocations data = new Branchandatmlocations();
             data.setLocationtype(rs.getString("locationtype"));
@@ -50,18 +89,19 @@ public class ViewsService {
     }
 
     public List<Branchemployees> getBranchEmployees(Integer branchId) {
-        String sql = "SELECT br.id  AS branchid,\n" +
-                     "       emp.id AS employeeid,\n" +
-                     "       emp.jobtitle,\n" +
-                     "       emp.ismanager,\n" +
-                     "       usr.firstname,\n" +
-                     "       usr.lastname,\n" +
-                     "       usr.email,\n" +
-                     "       usr.phonenumber\n" +
-                     "FROM employee emp\n" +
-                     "         JOIN \"User\" usr ON emp.userid = usr.id\n" +
-                     "         JOIN branch br ON emp.branchid = br.id\n" +
-                     "WHERE br.id = :branchId;";
+        String sql = """
+                SELECT br.id  AS branchid,
+                       emp.id AS employeeid,
+                       emp.jobtitle,
+                       emp.ismanager,
+                       usr.firstname,
+                       usr.lastname,
+                       usr.email,
+                       usr.phonenumber
+                FROM employee emp
+                         JOIN "User" usr ON emp.userid = usr.id
+                         JOIN branch br ON emp.branchid = br.id
+                WHERE br.id = :branchId;""";
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("branchId", branchId);
         return jdbcTemplate.query(sql, params, (rs, rowNum) -> {
@@ -78,9 +118,24 @@ public class ViewsService {
         });
     }
 
-    public List<Cardatmtransactions> getCardAtmTransactions() {
-        String sql = "SELECT * FROM public.cardatmtransactions;";
-        return jdbcTemplate.query(sql, (rs, rowNum) -> {
+    public List<Cardatmtransactions> getCardAtmTransactions(int cardId) {
+        String sql = """
+                SELECT atm.id AS transactionid,
+                       atm.type,
+                       at."Date",
+                       at.amount,
+                       atm.cardid,
+                       atm.accounttransactionid
+                FROM atmtransaction atm
+                         JOIN accounttransaction at ON atm.accounttransactionid = at.id
+                         JOIN card c ON atm.cardid = c.id
+                         JOIN account a ON c.accountid = a.id
+                         JOIN customer cust ON a.customerid = cust.id
+                WHERE c.id = :cardId;
+                """;
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("cardId", cardId);
+        return jdbcTemplate.query(sql, params, (rs, rowNum) -> {
             Cardatmtransactions data = new Cardatmtransactions();
             data.setTransactionid(rs.getLong("transactionid"));
             data.setType(rs.getString("type"));
@@ -92,9 +147,24 @@ public class ViewsService {
         });
     }
 
-    public List<Customeraccounts> getCustomerAccounts() {
-        String sql = "SELECT * FROM public.customeraccounts;";
-        return jdbcTemplate.query(sql, (rs, rowNum) -> {
+    public List<Customeraccounts> getCustomerAccounts(int customerId) {
+        String sql = """
+                SELECT cust.id AS customerid,
+                       a.id    AS accountid,
+                       a.accountnumber,
+                       a.accounttype,
+                       a.balance,
+                       c.id    AS cardid,
+                       c.cardnumber,
+                       c.cardtype,
+                       c.expiredate
+                FROM account a
+                         JOIN card c ON a.id = c.accountid
+                         JOIN customer cust ON a.customerid = cust.id
+                WHERE cust.id = :customerId;""";
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("customerId", customerId);
+        return jdbcTemplate.query(sql, params, (rs, rowNum) -> {
             Customeraccounts data = new Customeraccounts();
             data.setCustomerid(rs.getLong("customerid"));
             data.setAccountid(rs.getLong("accountid"));
@@ -109,9 +179,23 @@ public class ViewsService {
         });
     }
 
-    public List<Customerinfo> getCustomerInfo() {
-        String sql = "SELECT * FROM public.customerinfo;";
-        return jdbcTemplate.query(sql, (rs, rowNum) -> {
+    public List<Customerinfo> getCustomerInfo(String embg) {
+        String sql = """	
+                SELECT c.id AS customerid,
+                       u.firstname,
+                       u.lastname,
+                       u.dateofbirth,
+                       u.city,
+                       u.address,
+                       u.email,
+                       u.phonenumber
+                FROM customer c
+                         JOIN "User" u ON c.userid = u.id
+                WHERE u.embg = :embg;
+                """;
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("embg", embg);
+        return jdbcTemplate.query(sql, params, (rs, rowNum) -> {
             Customerinfo data = new Customerinfo();
             data.setCustomerid(rs.getLong("customerid"));
             data.setFirstname(rs.getString("firstname"));
@@ -125,9 +209,27 @@ public class ViewsService {
         });
     }
 
-    public List<Employeecontactinfo> getEmployeeContactInfo() {
-        String sql = "SELECT * FROM public.employeecontactinfo;";
-        return jdbcTemplate.query(sql, (rs, rowNum) -> {
+    public List<Employeecontactinfo> getEmployeeContactInfo(String embg) {
+        String sql = """
+                SELECT emp.id     AS employeeid,
+                       emp.jobtitle,
+                       emp.ismanager,
+                       br.id      AS branchid,
+                       br.address AS branchaddress,
+                       br.branchemail,
+                       br.branchphonenumber,
+                       usr.firstname,
+                       usr.lastname,
+                       usr.email,
+                       usr.phonenumber
+                FROM employee emp
+                         JOIN "User" usr ON emp.userid = usr.id
+                         JOIN branch br ON emp.branchid = br.id
+                WHERE usr.embg = :embg;
+                """;
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("embg", embg);
+        return jdbcTemplate.query(sql, params, (rs, rowNum) -> {
             Employeecontactinfo data = new Employeecontactinfo();
             data.setEmployeeid(rs.getLong("employeeid"));
             data.setJobtitle(rs.getString("jobtitle"));
@@ -145,7 +247,19 @@ public class ViewsService {
     }
 
     public List<Exchangeratestoday> getExchangeRatesToday() {
-        String sql = "SELECT * FROM public.exchangeratestoday;";
+        String sql = """
+                SELECT er.id             AS exchangerateid,
+                       er."Date",
+                       er.exchangerate,
+                       basecurrency.code AS basecurrencycode,
+                       basecurrency.name AS basecurrencyname,
+                       currency.code     AS currencycode,
+                       currency.name     AS currencyname
+                FROM exchangerate er
+                         JOIN currency basecurrency ON er.basecurrency = basecurrency.id
+                         JOIN currency currency ON er.currencyid = currency.id
+                WHERE er."Date" = CURRENT_DATE;
+                """;
         return jdbcTemplate.query(sql, (rs, rowNum) -> {
             Exchangeratestoday data = new Exchangeratestoday();
             data.setExchangerateid(rs.getLong("exchangerateid"));
@@ -159,9 +273,32 @@ public class ViewsService {
         });
     }
 
-    public List<Foreignexchangetransactions> getForeignExchangeTransactions() {
-        String sql = "SELECT * FROM public.foreignexchangetransactions;";
-        return jdbcTemplate.query(sql, (rs, rowNum) -> {
+    public List<Foreignexchangetransactions> getForeignExchangeTransactions(int accountId) {
+        String sql = """
+                SELECT fet.id                        AS transactionid,
+                       fet."Date",
+                       fet.amount,
+                       fet.convertedamount,
+                       fromcurrency.code             AS fromcurrencycode,
+                       fromcurrency.name             AS fromcurrencyname,
+                       tocurrency.code               AS tocurrencycode,
+                       tocurrency.name               AS tocurrencyname,
+                       fromexchangerate.exchangerate AS fromexchangerate,
+                       toexchangerate.exchangerate   AS toexchangerate,
+                       accountfrom.accountnumber     AS fromaccountnumber,
+                       accountto.accountnumber       AS toaccountnumber
+                FROM foreignexchangetransaction fet
+                         JOIN currency fromcurrency ON fet.fromcuurency = fromcurrency.id
+                         JOIN currency tocurrency ON fet.tocurrency = tocurrency.id
+                         JOIN exchangerate fromexchangerate ON fet.fromexchangerate = fromexchangerate.id
+                         JOIN exchangerate toexchangerate ON fet.toexchangerate = toexchangerate.id
+                         JOIN account accountfrom ON fet.accountidfrom = accountfrom.id
+                         JOIN account accountto ON fet.accountidto = accountto.id
+                WHERE fet.accountidfrom = :accountId OR fet.accountidto = :accountId;
+                """;
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("accountId", accountId);
+        return jdbcTemplate.query(sql, params, (rs, rowNum) -> {
             Foreignexchangetransactions data = new Foreignexchangetransactions();
             data.setTransactionid(rs.getLong("transactionid"));
             data.setDate(rs.getTimestamp("date"));
@@ -179,9 +316,32 @@ public class ViewsService {
         });
     }
 
-    public List<Loanactivity> getLoanActivity() {
-        String sql = "SELECT * FROM public.loanactivity;";
-        return jdbcTemplate.query(sql, (rs, rowNum) -> {
+    public List<Loanactivity> getLoanActivity(int loanId) {
+        String sql = """
+                SELECT l.id         AS loanid,
+                       lt.id        AS transactionid,
+                       lt."Date"    AS transactiondate,
+                       lt.amount    AS transactionamount,
+                       lt.principalamount,
+                       lt.interestamount,
+                       l.amountborrowed,
+                       l.amountowed,
+                       ir.value     AS interestrate,
+                       ir.isfixedrate,
+                       ir.interesttype,
+                       ir.datefrom  AS rateeffectivefrom,
+                       ir.dateto    AS rateeffectiveto,
+                       lth.datefrom AS ratehistoryfrom,
+                       lth.dateto   AS ratehistoryto
+                FROM loan l
+                         JOIN loantransaction lt ON l.id = lt.loanid
+                         JOIN interestrates ir ON l.id = ir.id
+                         JOIN loan_interestratehistory lth ON l.id = lth.loanid
+                WHERE l.id = :loanId;
+                """;
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("loanId", loanId);
+        return jdbcTemplate.query(sql, params, (rs, rowNum) -> {
             Loanactivity data = new Loanactivity();
             data.setLoanid(rs.getLong("loanid"));
             data.setTransactionid(rs.getLong("transactionid"));

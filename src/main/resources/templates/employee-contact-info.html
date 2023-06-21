@@ -11,16 +11,16 @@
 
     <div class="container">
         <h1>Contact Info for Employee</h1>
-        <h3>Employee Name: <span th:text="${firstname}"></span> <span th:text="${lastname}"></span></h3>
-        <p>Email: <span th:text="${email}"></span></p>
-        <p>Phone Number: <span th:text="${phonenumber}"></span></p>
-        <h3>Job Title: <span th:text="${jobtitle}"></span></h3>
-        <h3>Is Manager: <span th:text="${ismanager}"></span></h3>
+        <h3>Employee Name: <span th:text="${employee.firstname}"></span> <span th:text="${employee.lastname}"></span></h3>
+        <p>Email: <span th:text="${employee.email}"></span></p>
+        <p>Phone Number: <span th:text="${employee.phonenumber}"></span></p>
+        <h3>Job Title: <span th:text="${employee.jobtitle}"></span></h3>
+        <h3>Is Manager: <span th:text="${employee.ismanager}"></span></h3>
         <h3>Branch Information:</h3>
-        <p>Branch ID: <span th:text="${branchid}"></span></p>
-        <p>Branch Address: <span th:text="${branchaddress}"></span></p>
-        <p>Branch Email: <span th:text="${branchemail}"></span></p>
-        <p>Branch Phone Number: <span th:text="${branchphonenumber}"></span></p>
+        <p>Branch ID: <span th:text="${employee.branchid}"></span></p>
+        <p>Branch Address: <span th:text="${employee.branchaddress}"></span></p>
+        <p>Branch Email: <span th:text="${employee.branchemail}"></span></p>
+        <p>Branch Phone Number: <span th:text="${employee.branchphonenumber}"></span></p>
     </div>
 
 </body>

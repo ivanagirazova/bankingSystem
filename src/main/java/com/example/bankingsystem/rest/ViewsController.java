@@ -20,20 +20,16 @@ public class ViewsController {
     private final ViewsService viewsService;
 
     // OVA NE RABOTI
-    // za site da se smeni return type vo String radi thymeleaf i da se dodade Model model kako parametar
     @GetMapping("/allAccountTransactions")
-    public List<Allaccounttransactions> getAllAccountTransaction() {
-        return viewsService.getAllAccountTransactions();
-//        model.addAttribute("transactions", viewsService.getAllAccountTransactions());
-//        return "all-account-transactions";
+    public String getAllAccountTransaction(@RequestParam int accountId, Model model) {
+        model.addAttribute("accountTransactions", viewsService.getAllAccountTransactions(accountId));
+        return "all-account-transactions";
     }
 
     @GetMapping("/branchAndAtmLocations")
-//    public String getBranchAndAtmLocations(Model model) {
-    public List<Branchandatmlocations> getBranchAndAtmLocations() {
-        return viewsService.getBranchAndAtmLocations();
-//        model.addAttribute("transactions", viewsService.getAllAccountTransactions());
-//        return "all-account-transactions";
+    public String getBranchAndAtmLocations(Model model) {
+        model.addAttribute("locations", viewsService.getBranchAndAtmLocations());
+        return "branch-and-atm-locations";
     }
 
     @GetMapping("/branchEmployees")
@@ -43,17 +39,15 @@ public class ViewsController {
     }
 
     @GetMapping("/cardAtmTransactions")
-    public List<Cardatmtransactions> getCardAtmTransactions() {
-        return viewsService.getCardAtmTransactions();
-//        model.addAttribute("transactions", viewsService.getAllAccountTransactions());
-//        return "all-account-transactions";
+    public String getCardAtmTransactions(@RequestParam int cardId, Model model) {
+        model.addAttribute("cardTransactions", viewsService.getCardAtmTransactions(cardId));
+        return "card-atm-transactions";
     }
 
     @GetMapping("/customerAccounts")
-    public List<Customeraccounts> getCustomerAccounts() {
-        return viewsService.getCustomerAccounts();
-//        model.addAttribute("transactions", viewsService.getAllAccountTransactions());
-//        return "all-account-transactions";
+    public String getCustomerAccounts(@RequestParam int customerId, Model model) {
+        model.addAttribute("customerAccounts", viewsService.getCustomerAccounts(customerId));
+        return "customer-accounts";
     }
 
     @PostMapping("/addAccount")
@@ -65,10 +59,9 @@ public class ViewsController {
     }
 
     @GetMapping("/customerInfo")
-    public List<Customerinfo> getCustomerInfo() {
-        return viewsService.getCustomerInfo();
-//        model.addAttribute("transactions", viewsService.getAllAccountTransactions());
-//        return "all-account-transactions";
+    public String getCustomerInfo(@RequestParam String embg, Model model) {
+        model.addAttribute("customer", viewsService.getCustomerInfo(embg).get(0));
+        return "customer-info";
     }
 
     @PostMapping("/addCustomer")
@@ -81,31 +74,27 @@ public class ViewsController {
     }
 
     @GetMapping("/employeeContactInfo")
-    public List<Employeecontactinfo> getEmployeeContactInfo() {
-        return viewsService.getEmployeeContactInfo();
-//        model.addAttribute("transactions", viewsService.getAllAccountTransactions());
-//        return "all-account-transactions";
+    public String getEmployeeContactInfo(@RequestParam String embg, Model model) {
+        model.addAttribute("employee", viewsService.getEmployeeContactInfo(embg).get(0));
+        return "employee-contact-info";
     }
 
     @GetMapping("/exchangeRatesToday")
-    public List<Exchangeratestoday> getExchangeRatesToday() {
-        return viewsService.getExchangeRatesToday();
-//        model.addAttribute("transactions", viewsService.getAllAccountTransactions());
-//        return "all-account-transactions";
+    public String getExchangeRatesToday(Model model) {
+        model.addAttribute("exchangeRates", viewsService.getExchangeRatesToday());
+        return "exchange-rates-today";
     }
 
     @GetMapping("/foreignExchangeTransactions")
-    public List<Foreignexchangetransactions> getForeignExchangeTransactions() {
-        return viewsService.getForeignExchangeTransactions();
-//        model.addAttribute("transactions", viewsService.getAllAccountTransactions());
-//        return "all-account-transactions";
+    public String getForeignExchangeTransactions(@RequestParam int accountId, Model model) {
+        model.addAttribute("transactions", viewsService.getForeignExchangeTransactions(accountId));
+        return "foreign-exchange-transactions";
     }
 
     @GetMapping("/loanActivity")
-    public List<Loanactivity> getLoanActivity() {
-        return viewsService.getLoanActivity();
-//        model.addAttribute("transactions", viewsService.getAllAccountTransactions());
-//        return "all-account-transactions";
+    public String getLoanActivity(@RequestParam int loanId, Model model) {
+        model.addAttribute("loanActivity", viewsService.getLoanActivity(loanId));
+        return "loan-activity";
     }
 
 //    @PostMapping("")
