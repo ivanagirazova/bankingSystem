@@ -15,10 +15,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.sql.Types;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -26,7 +32,8 @@ import java.util.List;
 @Slf4j
 public class ViewsService {
 
-    private final NamedParameterJdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     public Page<Allaccounttransactions> findAllWithPagination(int accountId, int page, int size) {
         int offset = page * size;
@@ -44,7 +51,7 @@ public class ViewsService {
         params.addValue("size", size);
         params.addValue("offset", offset);
 
-        List<Allaccounttransactions> entities = jdbcTemplate.query(query, params, (rs, rowNum) -> {
+        List<Allaccounttransactions> entities = namedParameterJdbcTemplate.query(query, params, (rs, rowNum) -> {
             Allaccounttransactions data = new Allaccounttransactions();
             data.setAccountid(rs.getLong("accountid"));
             data.setTransactionid(rs.getLong("transactionid"));
@@ -66,13 +73,8 @@ public class ViewsService {
         String sql = """
                 SELECT COUNT(*) FROM allaccounttransactions WHERE accountId = :accountId;
                 """;
-        return jdbcTemplate.queryForObject(sql, params, Integer.class);
+        return namedParameterJdbcTemplate.queryForObject(sql, params, Integer.class);
     }
-
-    //    CALL AddEmployeeToBranch('Cashier', FALSE, NULL, 1, '2102968450017');
-//    public void addEmployeeToBranch(String jobTitle, boolean isManager, int managedBy, int branchId, int employeeEmbg) {
-//        jdbcTemplate.update("CALL addemployeetobranch(?, ?, ?, ?, ?)", jobTitle, isManager, managedBy, branchId, employeeEmbg);
-//    }
 
     public List<Branchandatmlocations> getBranchAndAtmLocations() {
         String sql = """
@@ -86,7 +88,7 @@ public class ViewsService {
                         atm.address
                  FROM atm;
                 """;
-        return jdbcTemplate.query(sql, (rs, rowNum) -> {
+        return namedParameterJdbcTemplate.query(sql, (rs, rowNum) -> {
             Branchandatmlocations data = new Branchandatmlocations();
             data.setLocationtype(rs.getString("locationtype"));
             data.setLocationid(rs.getLong("locationid"));
@@ -111,7 +113,7 @@ public class ViewsService {
                 WHERE br.id = :branchId;""";
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("branchId", branchId);
-        return jdbcTemplate.query(sql, params, (rs, rowNum) -> {
+        return namedParameterJdbcTemplate.query(sql, params, (rs, rowNum) -> {
             Branchemployees data = new Branchemployees();
             data.setBranchid(rs.getLong("branchid"));
             data.setEmployeeid(rs.getLong("employeeid"));
@@ -142,7 +144,7 @@ public class ViewsService {
                 """;
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("cardId", cardId);
-        return jdbcTemplate.query(sql, params, (rs, rowNum) -> {
+        return namedParameterJdbcTemplate.query(sql, params, (rs, rowNum) -> {
             Cardatmtransactions data = new Cardatmtransactions();
             data.setTransactionid(rs.getLong("transactionid"));
             data.setType(rs.getString("type"));
@@ -172,7 +174,7 @@ public class ViewsService {
                 """;
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("customerId", customerId);
-        return jdbcTemplate.query(sql, params, (rs, rowNum) -> {
+        return namedParameterJdbcTemplate.query(sql, params, (rs, rowNum) -> {
             Customeraccounts data = new Customeraccounts();
             data.setCustomerid(rs.getLong("customerid"));
             data.setAccountid(rs.getLong("accountid"));
@@ -203,7 +205,7 @@ public class ViewsService {
                 """;
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("embg", embg);
-        return jdbcTemplate.query(sql, params, (rs, rowNum) -> {
+        return namedParameterJdbcTemplate.query(sql, params, (rs, rowNum) -> {
             Customerinfo data = new Customerinfo();
             data.setCustomerid(rs.getLong("customerid"));
             data.setFirstname(rs.getString("firstname"));
@@ -237,7 +239,7 @@ public class ViewsService {
                 """;
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("embg", embg);
-        return jdbcTemplate.query(sql, params, (rs, rowNum) -> {
+        return namedParameterJdbcTemplate.query(sql, params, (rs, rowNum) -> {
             Employeecontactinfo data = new Employeecontactinfo();
             data.setEmployeeid(rs.getLong("employeeid"));
             data.setJobtitle(rs.getString("jobtitle"));
@@ -268,7 +270,7 @@ public class ViewsService {
                          JOIN currency currency ON er.currencyid = currency.id
                 WHERE er."Date" = CURRENT_DATE;
                 """;
-        return jdbcTemplate.query(sql, (rs, rowNum) -> {
+        return namedParameterJdbcTemplate.query(sql, (rs, rowNum) -> {
             Exchangeratestoday data = new Exchangeratestoday();
             data.setExchangerateid(rs.getLong("exchangerateid"));
             data.setDate(rs.getDate("date"));
@@ -306,7 +308,7 @@ public class ViewsService {
                 """;
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("accountId", accountId);
-        return jdbcTemplate.query(sql, params, (rs, rowNum) -> {
+        return namedParameterJdbcTemplate.query(sql, params, (rs, rowNum) -> {
             Foreignexchangetransactions data = new Foreignexchangetransactions();
             data.setTransactionid(rs.getLong("transactionid"));
             data.setDate(rs.getTimestamp("date"));
@@ -349,7 +351,7 @@ public class ViewsService {
                 """;
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("loanId", loanId);
-        return jdbcTemplate.query(sql, params, (rs, rowNum) -> {
+        return namedParameterJdbcTemplate.query(sql, params, (rs, rowNum) -> {
             Loanactivity data = new Loanactivity();
             data.setLoanid(rs.getLong("loanid"));
             data.setTransactionid(rs.getLong("transactionid"));
@@ -370,39 +372,31 @@ public class ViewsService {
         });
     }
 
+    //key constraint
+    public void createOnlineBanking(String embg, String username, String password) {
+        jdbcTemplate.update("CALL createonlinebanking(?, ?, ?)", embg, username, password);
+    }
+
     // PORCEDURI - NE RABOTAT
-//    public void addCustomer(String embg, String firstName, String lastName, LocalDate dob, String city, String address, String email, String phoneNumber) {
-//        jdbcTemplate.((ConnectionCallback<Object>) connection -> {
-//            log.info("{}", dob);
-//            log.info("{}", phoneNumber);
-//
-//            CallableStatement callableStatement = connection.prepareCall("{call addcustomer(?, ?, ?, ?, ?, ?, ?, ?)}");
-//            callableStatement.setString(1, embg);
-//            callableStatement.setString(2, firstName);
-//            callableStatement.setString(3, lastName);
-//            callableStatement.setDate(4, Date.valueOf(dob));
-//            callableStatement.setString(5, city);
-//            callableStatement.setString(6, address);
-//            callableStatement.setString(7, email);
-//            callableStatement.setString(8, phoneNumber);
-//            callableStatement.execute();
-//            log.info("Customer added");
-//            return null;
-//        });
-//    }
-//
-//    public void addAccount(String accountType, double amount, String embg, String currencyCode, int branchId) {
-//        jdbcTemplate.execute((ConnectionCallback<Object>) connection -> {
-//
-//            CallableStatement callableStatement = connection.prepareCall("{call addaccount(?, ?, ?, ?, ?)}");
-//            callableStatement.setString(1, accountType);
-//            callableStatement.setDouble(2, amount);
-//            callableStatement.setString(3, embg);
-//            callableStatement.setString(4, currencyCode);
-//            callableStatement.setInt(5, branchId);
-//            callableStatement.execute();
-//            log.info("Account added");
-//            return null;
-//        });
-//    }
+    public void addCustomer(String embg, String firstName, String lastName, LocalDate dob, String city, String address, String email, String phoneNumber) {
+        jdbcTemplate.update("CALL addcustomer(?, ?, ?, ?, ?, ?, ?, )", embg, firstName, lastName, dob, city, address, email, phoneNumber);
+    }
+
+    // NE RABOTI
+    public void addAccount(String accountType, BigDecimal balance, String customerEmbg, String currencyCode, int branchId) {
+        jdbcTemplate.update("CALL addaccount(?, ?, ?, ?, ?)", accountType, balance, customerEmbg, currencyCode, branchId);
+    }
+
+    // RABOTI
+    public void addCard(String cardType, String accountNumber) {
+        jdbcTemplate.update("CALL createcard(?, ?)", cardType, accountNumber);
+    }
+
+    public void makeTransaction(String type, LocalDate date, BigDecimal amount, String accountNumberFrom, String accountNumberTo) {
+        jdbcTemplate.update("CALL makeaccounttransaction(?, ?, ?, ?, ?)", type, date, amount, accountNumberFrom, accountNumberTo);
+    }
+
+    public void addEmployeeToBranch(String p_jobTitle, Boolean p_isManager, int p_managedBy, int p_branchId, String p_userEmbg) {
+        jdbcTemplate.update("CALL addemployeetobranch(?, ?, ?, ?, ?)", p_jobTitle, p_isManager, p_managedBy, p_branchId, p_userEmbg);
+    }
 }

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -48,8 +49,7 @@ public class ViewsController {
     }
 
     @GetMapping("/")
-    public String getNavbar()
-    {
+    public String getNavbar() {
         return "navbar";
     }
 
@@ -77,27 +77,10 @@ public class ViewsController {
         return "customer-accounts";
     }
 
-    @PostMapping("/addAccount")
-    public String addCustomer(@RequestParam String accountType, @RequestParam double amount,
-                              @RequestParam String embg, @RequestParam String currencyCode,
-                              @RequestParam int branchId) {
-//        viewsService.addAccount(accountType, amount, embg, currencyCode, branchId);
-        return "redirect:/accounts";
-    }
-
     @GetMapping("/customerInfo")
     public String getCustomerInfo(@RequestParam String embg, Model model) {
         model.addAttribute("customer", viewsService.getCustomerInfo(embg).get(0));
         return "customer-info";
-    }
-
-    @PostMapping("/addCustomer")
-    public String addCustomer(@RequestParam String embg, @RequestParam String firstName,
-                              @RequestParam String lastName, @RequestParam LocalDate dob,
-                              @RequestParam String city, @RequestParam String address,
-                              @RequestParam String email, @RequestParam String phoneNumber) {
-//        viewsService.addCustomer(embg, firstName, lastName, dob, city, address, email, phoneNumber);
-        return "redirect:/customers";
     }
 
     @GetMapping("/employeeContactInfo")
@@ -124,7 +107,93 @@ public class ViewsController {
         return "loan-activity";
     }
 
-//    @PostMapping("")
-//    public String
+    @GetMapping("/addAccount")
+    public String addAccount() {
+        return "add-account";
+    }
+
+    @PostMapping("/add-account")
+    public String addAccount(@RequestParam("accountType") String accountType,
+                             @RequestParam("balance") BigDecimal balance,
+                             @RequestParam("customerEmbg") String customerEmbg,
+                             @RequestParam("currencyCode") String currencyCode,
+                             @RequestParam("branchId") int branchId) {
+        viewsService.addAccount(accountType, balance, customerEmbg, currencyCode, branchId);
+        return "redirect:/bankingSystem/customerAccounts?";
+    }
+
+    @GetMapping("/addOnlineBanking")
+    public String addOnlineBanking() {
+        return "add-online-banking";
+    }
+
+    @PostMapping("/create-online-banking")
+    public String createOnlineBanking(@RequestParam("p_UserEmbg") String embg,
+                                      @RequestParam("p_Username") String username,
+                                      @RequestParam("p_Password") String password) {
+        viewsService.createOnlineBanking(embg, username, password);
+        return "redirect:/bankingSystem/addOnlineBanking";
+    }
+
+    @GetMapping("/addClient")
+    public String addClient() {
+        return "add-client";
+    }
+
+    @PostMapping("/add-customer")
+    public String addCustomer(@RequestParam("embg") String embg,
+                              @RequestParam("firstname") String firstname,
+                              @RequestParam("lastname") String lastname,
+                              @RequestParam("dateofbirth") LocalDate dateofbirth,
+                              @RequestParam("city") String city,
+                              @RequestParam("address") String address,
+                              @RequestParam("email") String email,
+                              @RequestParam("phonenumber") String phonenumber) {
+        viewsService.addCustomer(embg, firstname, lastname, dateofbirth, city, address, email, phonenumber);
+        return "redirect:/bankingSystem/customerInfo?";
+    }
+
+    @GetMapping("/addCard")
+    public String addCard() {
+        return "add-card";
+    }
+
+    @PostMapping("/add-card")
+    public String addCard(@RequestParam("cardType") String cardType,
+                          @RequestParam("accountNumber") String accountNumber) {
+        viewsService.addCard(cardType, accountNumber);
+        return "redirect:/bankingSystem/customerInfo?";
+    }
+
+    @GetMapping("/makeTransaction")
+    public String makeTransaction() {
+        return "make-account-transaction";
+    }
+
+    @PostMapping("/make-account-transaction")
+    public String makeTransaction(@RequestParam("type") String type,
+            @RequestParam("date") LocalDate date,
+                          @RequestParam("amount") BigDecimal amount,
+                                  @RequestParam("accountNumberFrom") String accountNumberFrom,
+                                  @RequestParam("accountNumberTo") String accountNumberTo) {
+        viewsService.makeTransaction(type, date, amount, accountNumberFrom, accountNumberTo);
+        return "redirect:/bankingSystem/customerInfo?";
+    }
+
+    @GetMapping("/addEmployeeToBranch")
+    public String addEmployeeToBranch() {
+        return "add-employee-to-branch";
+    }
+
+    @PostMapping("/add-employee-to-branch")
+    public String addEmployeeToBranch(@RequestParam("p_JobTitle") String p_JobTitle,
+            @RequestParam("p_IsManager") Boolean p_IsManager,
+                          @RequestParam("p_ManagedBy") int p_ManagedBy,
+                                  @RequestParam("p_BranchId") int p_BranchId,
+                                  @RequestParam("p_UserEmbg") String p_UserEmbg) {
+        viewsService.addEmployeeToBranch(p_JobTitle, p_IsManager, p_ManagedBy, p_BranchId, p_UserEmbg);
+        return "redirect:/bankingSystem/customerInfo?";
+    }
+
 
 }
