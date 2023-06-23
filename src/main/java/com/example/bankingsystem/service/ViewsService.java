@@ -1,8 +1,20 @@
 package com.example.bankingsystem.service;
 
-import com.example.bankingsystem.views.*;
+import com.example.bankingsystem.views.Allaccounttransactions;
+import com.example.bankingsystem.views.Branchandatmlocations;
+import com.example.bankingsystem.views.Branchemployees;
+import com.example.bankingsystem.views.Cardatmtransactions;
+import com.example.bankingsystem.views.Customeraccounts;
+import com.example.bankingsystem.views.Customerinfo;
+import com.example.bankingsystem.views.Employeecontactinfo;
+import com.example.bankingsystem.views.Exchangeratestoday;
+import com.example.bankingsystem.views.Foreignexchangetransactions;
+import com.example.bankingsystem.views.Loanactivity;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -16,38 +28,23 @@ public class ViewsService {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    public List<Allaccounttransactions> getAllAccountTransactions(int accountId) {
-        String sql = """
-                SELECT a.id   AS accountid,
-                       at.id  AS transactionid,
-                       at.type,
-                       at."Date",
-                       at.amount,
-                       c.code AS currencycode,
-                       at.accountfrom,
-                       at.accountto
-                FROM accounttransaction at
-                         JOIN currency c ON at.currencyid = c.id
-                         JOIN account a ON at.accountfrom = a.id OR at.accountto = a.id
-                         JOIN customer cust ON a.customerid = cust.id
-                UNION ALL
-                SELECT a.id          AS accountid,
-                       lt.id         AS transactionid,
-                       'Loan'::text  AS type,
-                       lt."Date",
-                       lt.amount,
-                       'MKD'::bpchar AS currencycode,
-                       lt.accountfrom,
-                       l.accountid   AS accountto
-                FROM loantransaction lt
-                         JOIN loan l ON lt.loanid = l.id
-                         JOIN account a ON lt.accountfrom = a.id
-                         JOIN customer cust ON a.customerid = cust.id
-                WHERE a.id = :accountId;
+    public Page<Allaccounttransactions> findAllWithPagination(int accountId, int page, int size) {
+        int offset = page * size;
+
+        String query = """
+                SELECT *
+                FROM allaccounttransactions
+                WHERE accountid = :accountId
+                LIMIT :size
+                OFFSET :offset;
                 """;
+
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("accountId", accountId);
-        return jdbcTemplate.query(sql, params, (rs, rowNum) -> {
+        params.addValue("size", size);
+        params.addValue("offset", offset);
+
+        List<Allaccounttransactions> entities = jdbcTemplate.query(query, params, (rs, rowNum) -> {
             Allaccounttransactions data = new Allaccounttransactions();
             data.setAccountid(rs.getLong("accountid"));
             data.setTransactionid(rs.getLong("transactionid"));
@@ -59,7 +56,17 @@ public class ViewsService {
             data.setAccountto(rs.getLong("accountto"));
             return data;
         });
-//        return jdbcTemplate.queryForList(sql, Allaccounttransactions.class);
+
+        int totalCount = countTotalRecords(params); // Implement this method to count the total number of records in the view
+
+        return new PageImpl<>(entities, PageRequest.of(page - 1, size), totalCount);
+    }
+
+    private int countTotalRecords(MapSqlParameterSource params) {
+        String sql = """
+                SELECT COUNT(*) FROM allaccounttransactions WHERE accountId = :accountId;
+                """;
+        return jdbcTemplate.queryForObject(sql, params, Integer.class);
     }
 
     //    CALL AddEmployeeToBranch('Cashier', FALSE, NULL, 1, '2102968450017');
@@ -78,7 +85,7 @@ public class ViewsService {
                         atm.id      AS locationid,
                         atm.address
                  FROM atm;
-                 """;
+                """;
         return jdbcTemplate.query(sql, (rs, rowNum) -> {
             Branchandatmlocations data = new Branchandatmlocations();
             data.setLocationtype(rs.getString("locationtype"));
@@ -161,7 +168,8 @@ public class ViewsService {
                 FROM account a
                          JOIN card c ON a.id = c.accountid
                          JOIN customer cust ON a.customerid = cust.id
-                WHERE cust.id = :customerId;""";
+                WHERE cust.id = :customerId;
+                """;
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("customerId", customerId);
         return jdbcTemplate.query(sql, params, (rs, rowNum) -> {
@@ -364,7 +372,7 @@ public class ViewsService {
 
     // PORCEDURI - NE RABOTAT
 //    public void addCustomer(String embg, String firstName, String lastName, LocalDate dob, String city, String address, String email, String phoneNumber) {
-//        jdbcTemplate.execute((ConnectionCallback<Object>) connection -> {
+//        jdbcTemplate.((ConnectionCallback<Object>) connection -> {
 //            log.info("{}", dob);
 //            log.info("{}", phoneNumber);
 //

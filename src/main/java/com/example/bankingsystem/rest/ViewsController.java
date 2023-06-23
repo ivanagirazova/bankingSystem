@@ -1,16 +1,22 @@
 package com.example.bankingsystem.rest;
 
 import com.example.bankingsystem.service.ViewsService;
-import com.example.bankingsystem.views.*;
+import com.example.bankingsystem.views.Allaccounttransactions;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Controller
 @RequestMapping("/bankingSystem")
@@ -19,10 +25,25 @@ public class ViewsController {
 
     private final ViewsService viewsService;
 
-    // OVA NE RABOTI
+    // da se proveri paginacija
     @GetMapping("/allAccountTransactions")
-    public String getAllAccountTransaction(@RequestParam int accountId, Model model) {
-        model.addAttribute("accountTransactions", viewsService.getAllAccountTransactions(accountId));
+    public String getMyViewData(
+            @RequestParam int accountId,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "50") int size,
+            Model model) {
+        Page<Allaccounttransactions> viewDataPage = viewsService.findAllWithPagination(accountId, page, size);
+
+        int totalPages = viewDataPage.getTotalPages();
+        if (totalPages > 0) {
+            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                    .boxed()
+                    .collect(Collectors.toList());
+            model.addAttribute("pageNumbers", pageNumbers);
+        }
+
+        model.addAttribute("accountNumber", accountId);
+        model.addAttribute("viewDataPage", viewDataPage);
         return "all-account-transactions";
     }
 

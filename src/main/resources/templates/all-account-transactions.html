@@ -21,11 +21,10 @@
                 <th>Currency Code</th>
                 <th>Account From</th>
                 <th>Account To</th>
-                <th>Transaction Category</th>
             </tr>
             </thead>
             <tbody>
-            <tr th:each="transaction : ${accountTransactions}">
+            <tr th:each="transaction : ${viewDataPage.content}">
                 <td th:text="${transaction.transactionid}"></td>
                 <td th:text="${transaction.type}"></td>
                 <td th:text="${transaction.date}"></td>
@@ -33,10 +32,15 @@
                 <td th:text="${transaction.currencycode}"></td>
                 <td th:text="${transaction.accountfrom}"></td>
                 <td th:text="${transaction.accountto}"></td>
-                <td th:text="${transaction.transactioncategory}"></td>
             </tr>
             </tbody>
         </table>
+        <div style="display: inline-block" th:if="${viewDataPage.totalPages > 0}" class="pagination"
+             th:each="pageNumber : ${pageNumbers}">
+            <a th:href="@{/bankingSystem/allAccountTransactions(accountId=${accountNumber}, size=${viewDataPage.size}, page=${pageNumber})}"
+               th:text=${pageNumber}
+               th:class="${pageNumber==viewDataPage.number + 1} ? active"></a>
+        </div>
     </div>
 
 </body>
