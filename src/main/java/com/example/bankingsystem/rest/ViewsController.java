@@ -47,6 +47,12 @@ public class ViewsController {
         return "all-account-transactions";
     }
 
+    @GetMapping("/")
+    public String getNavbar()
+    {
+        return "navbar";
+    }
+
     @GetMapping("/branchAndAtmLocations")
     public String getBranchAndAtmLocations(Model model) {
         model.addAttribute("locations", viewsService.getBranchAndAtmLocations());
