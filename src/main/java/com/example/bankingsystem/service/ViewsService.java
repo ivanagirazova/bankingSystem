@@ -16,14 +16,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.sql.Types;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -379,7 +376,7 @@ public class ViewsService {
 
     // PORCEDURI - NE RABOTAT
     public void addCustomer(String embg, String firstName, String lastName, LocalDate dob, String city, String address, String email, String phoneNumber) {
-        jdbcTemplate.update("CALL addcustomer(?, ?, ?, ?, ?, ?, ?, )", embg, firstName, lastName, dob, city, address, email, phoneNumber);
+        jdbcTemplate.update("CALL AddCustomer(?, ?, ?, ?, ?, ?, ?, ?)", embg, firstName, lastName, dob, city, address, email, phoneNumber);
     }
 
     // NE RABOTI

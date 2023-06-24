@@ -4,8 +4,6 @@ import com.example.bankingsystem.service.ViewsService;
 import com.example.bankingsystem.views.Allaccounttransactions;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -140,17 +138,18 @@ public class ViewsController {
         return "add-client";
     }
 
-    @PostMapping("/add-customer")
-    public String addCustomer(@RequestParam("embg") String embg,
-                              @RequestParam("firstname") String firstname,
-                              @RequestParam("lastname") String lastname,
-                              @RequestParam("dateofbirth") LocalDate dateofbirth,
-                              @RequestParam("city") String city,
-                              @RequestParam("address") String address,
-                              @RequestParam("email") String email,
-                              @RequestParam("phonenumber") String phonenumber) {
-        viewsService.addCustomer(embg, firstname, lastname, dateofbirth, city, address, email, phonenumber);
-        return "redirect:/bankingSystem/customerInfo?";
+    @GetMapping("/add-customer")
+    public String addCustomer(
+        @RequestParam("embg") String embg,
+        @RequestParam("firstname") String firstname,
+        @RequestParam("lastname") String lastname,
+        @RequestParam("dateofbirth") LocalDate dateofbirth,
+        @RequestParam("city") String city,
+        @RequestParam("address") String address,
+        @RequestParam("email") String email,
+        @RequestParam("phonenumber") String phonenumber) {
+            viewsService.addCustomer(embg, firstname, lastname, dateofbirth, city, address, email, phonenumber);
+            return "redirect:/bankingSystem/customerInfo?embg=" + embg;
     }
 
     @GetMapping("/addCard")
@@ -171,13 +170,14 @@ public class ViewsController {
     }
 
     @PostMapping("/make-account-transaction")
-    public String makeTransaction(@RequestParam("type") String type,
-            @RequestParam("date") LocalDate date,
-                          @RequestParam("amount") BigDecimal amount,
-                                  @RequestParam("accountNumberFrom") String accountNumberFrom,
-                                  @RequestParam("accountNumberTo") String accountNumberTo) {
-        viewsService.makeTransaction(type, date, amount, accountNumberFrom, accountNumberTo);
-        return "redirect:/bankingSystem/customerInfo?";
+    public String makeTransaction(
+        @RequestParam("type") String type,
+        @RequestParam("date") LocalDate date,
+        @RequestParam("amount") BigDecimal amount,
+        @RequestParam("accountNumberFrom") String accountNumberFrom,
+        @RequestParam("accountNumberTo") String accountNumberTo) {
+            viewsService.makeTransaction(type, date, amount, accountNumberFrom, accountNumberTo);
+            return "redirect:/bankingSystem/customerInfo?";
     }
 
     @GetMapping("/addEmployeeToBranch")
