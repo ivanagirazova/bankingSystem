@@ -195,5 +195,22 @@ public class ViewsController {
         return "redirect:/bankingSystem/customerInfo?";
     }
 
+    @GetMapping("/exchangeMoney")
+    public String exchangeMoney() { return "exchange-money"; }
+
+    @GetMapping("/openLoan")
+    public String openLoan() { return "open-loan"; }
+
+    @GetMapping("/payLoan")
+    public String payLoan() { return "make-loan-transaction"; }
+
+    @GetMapping("/generateExchangeRates")
+    public String generateExchangeRates() { return "generate-exchange-rates"; }
+
+    @GetMapping("/makeAtmTransaction")
+    public String makeAtmTransaction() { return "make-atm-transaction"; }
+
+    @GetMapping("/withdrawMoney")
+    public String withdrawMoney() { return "withdraw-exchange"; }
 
 }
