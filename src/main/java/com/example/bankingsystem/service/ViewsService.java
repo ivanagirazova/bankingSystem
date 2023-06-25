@@ -37,7 +37,7 @@ public class ViewsService {
 
         String query = """
                 SELECT *
-                FROM allaccounttransactions4
+                FROM allaccounttransactions
                 WHERE accountid = :accountId
                 LIMIT :size
                 OFFSET :offset;
@@ -390,7 +390,6 @@ public class ViewsService {
         jdbcTemplate.update("CALL GenerateExchangeRatesForToday();");
     }
 
-    //CALL AddFixedLoan(15000, 'EUR', 'Car Loan', '2023-05-01', '2028-05-01', '2204976410059', 5, false);
     public void openLoan(
         Integer amountBorrowed,
         String currencyCode,
@@ -408,5 +407,13 @@ public class ViewsService {
 
     public void makeLoanTransaction(LocalDate date, Integer amount, Integer loanId) {
         jdbcTemplate.update("CALL MakeLoanTransaction(?, ?, ?);", date, amount, loanId);
+    }
+
+    public void makeAtmTransaction(String p_type, String p_cardNumber, String p_ccv, int p_atmId, BigDecimal p_amount, int p_currencyIdOfUser) {
+        jdbcTemplate.update("CALL makeatmtransaction(?, ?, ?, ?, ?, ?)", p_type, p_cardNumber, p_ccv, p_atmId, p_amount, p_currencyIdOfUser);
+    }
+
+    public void withdrawMoney(BigDecimal amountToExchange, String currencyCode, String accountNumberFrom) {
+        jdbcTemplate.update("CALL withdrawforeignexchangetransaction(?, ?, ?)", amountToExchange, currencyCode, accountNumberFrom);
     }
 }
