@@ -11,6 +11,8 @@
     <div th:include="navbar.html"></div>
     <div class="container">
         <h1>Loan Activity for Loan </h1>
+        <h4>amount borrowed: <span th:text="${loanActivity.get(0).amountborrowed}"></span></h4>
+        <h4>amount owed: <span th:text="${loanActivity.get(0).amountowed}"></span></h4>
         <table class="table table-bordered">
             <thead>
             <tr>
@@ -19,15 +21,8 @@
                 <th>Transaction Amount</th>
                 <th>Principal Amount</th>
                 <th>Interest Amount</th>
-                <th>Amount Borrowed</th>
-                <th>Amount Owed</th>
                 <th>Interest Rate</th>
                 <th>Is Fixed Rate</th>
-                <th>Interest Type</th>
-                <th>Rate Effective From</th>
-                <th>Rate Effective To</th>
-                <th>Rate History From</th>
-                <th>Rate History To</th>
             </tr>
             </thead>
             <tbody>
@@ -38,15 +33,8 @@
                 <td th:text="${activity.transactionamount}"></td>
                 <td th:text="${activity.principalamount}"></td>
                 <td th:text="${activity.interestamount}"></td>
-                <td th:text="${activity.amountborrowed}"></td>
-                <td th:text="${activity.amountowed}"></td>
                 <td th:text="${activity.interestrate}"></td>
                 <td th:text="${activity.isfixedrate}"></td>
-                <td th:text="${activity.interesttype}"></td>
-                <td th:text="${activity.rateeffectivefrom}"></td>
-                <td th:text="${activity.rateeffectiveto}"></td>
-                <td th:text="${activity.ratehistoryfrom}"></td>
-                <td th:text="${activity.ratehistoryto}"></td>
             </tr>
             </tbody>
         </table>

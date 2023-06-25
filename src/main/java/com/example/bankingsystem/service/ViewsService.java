@@ -37,7 +37,7 @@ public class ViewsService {
 
         String query = """
                 SELECT *
-                FROM allaccounttransactions
+                FROM allaccounttransactions4
                 WHERE accountid = :accountId
                 LIMIT :size
                 OFFSET :offset;
@@ -325,26 +325,9 @@ public class ViewsService {
 
     public List<Loanactivity> getLoanActivity(int loanId) {
         String sql = """
-                SELECT l.id         AS loanid,
-                       lt.id        AS transactionid,
-                       lt."Date"    AS transactiondate,
-                       lt.amount    AS transactionamount,
-                       lt.principalamount,
-                       lt.interestamount,
-                       l.amountborrowed,
-                       l.amountowed,
-                       ir.value     AS interestrate,
-                       ir.isfixedrate,
-                       ir.interesttype,
-                       ir.datefrom  AS rateeffectivefrom,
-                       ir.dateto    AS rateeffectiveto,
-                       lth.datefrom AS ratehistoryfrom,
-                       lth.dateto   AS ratehistoryto
-                FROM loan l
-                         JOIN loantransaction lt ON l.id = lt.loanid
-                         JOIN interestrates ir ON l.id = ir.id
-                         JOIN loan_interestratehistory lth ON l.id = lth.loanid
-                WHERE l.id = :loanId;
+                SELECT *
+                FROM loanactivity l
+                WHERE l.loanId = :loanId;
                 """;
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("loanId", loanId);
@@ -358,13 +341,6 @@ public class ViewsService {
             data.setInterestamount(rs.getLong("interestamount"));
             data.setAmountborrowed(rs.getLong("amountborrowed"));
             data.setAmountowed(rs.getLong("amountowed"));
-            data.setInterestrate(rs.getLong("interestrate"));
-            data.setIsfixedrate(rs.getBoolean("isfixedrate"));
-            data.setInteresttype(rs.getString("interesttype"));
-            data.setRateeffectivefrom(rs.getDate("rateeffectivefrom"));
-            data.setRateeffectiveto(rs.getDate("rateeffectiveto"));
-            data.setRatehistoryfrom(rs.getDate("ratehistoryfrom"));
-            data.setRatehistoryto(rs.getDate("ratehistoryto"));
             return data;
         });
     }
@@ -412,5 +388,25 @@ public class ViewsService {
 
     public void generateExchangeRatesForToday() {
         jdbcTemplate.update("CALL GenerateExchangeRatesForToday();");
+    }
+
+    //CALL AddFixedLoan(15000, 'EUR', 'Car Loan', '2023-05-01', '2028-05-01', '2204976410059', 5, false);
+    public void openLoan(
+        Integer amountBorrowed,
+        String currencyCode,
+        String loanFor,
+        LocalDate startDate,
+        LocalDate endDate,
+        String customerEmbg,
+        Integer responsibleEmpId,
+        Boolean isFixed
+    ) {
+        jdbcTemplate.update("CALL AddFixedLoan(?, ?, ?, ?, ?, ?, ?, ?);",
+                amountBorrowed, currencyCode, loanFor, startDate, endDate, customerEmbg, responsibleEmpId, isFixed
+        );
+    }
+
+    public void makeLoanTransaction(LocalDate date, Integer amount, Integer loanId) {
+        jdbcTemplate.update("CALL MakeLoanTransaction(?, ?, ?);", date, amount, loanId);
     }
 }

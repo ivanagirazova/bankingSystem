@@ -33,7 +33,7 @@ public class ViewsController {
             Model model) {
         Page<Allaccounttransactions> viewDataPage = viewsService.findAllWithPagination(accountId, page, size);
 
-        int totalPages = viewDataPage.getTotalPages();
+        int totalPages = viewDataPage.getTotalPages() - 1;
         if (totalPages > 0) {
             List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
                     .boxed()
@@ -163,7 +163,7 @@ public class ViewsController {
     public String addCard(@RequestParam("cardType") String cardType,
                           @RequestParam("accountNumber") String accountNumber) {
         viewsService.addCard(cardType, accountNumber);
-        return "redirect:/bankingSystem/customerInfo?";
+        return "redirect:/bankingSystem/";
     }
 
     @GetMapping("/makeTransaction")
@@ -195,7 +195,7 @@ public class ViewsController {
             @RequestParam("p_BranchId") int p_BranchId,
             @RequestParam("p_UserEmbg") String p_UserEmbg) {
         viewsService.addEmployeeToBranch(p_JobTitle, p_IsManager, p_ManagedBy, p_BranchId, p_UserEmbg);
-        return "redirect:/bankingSystem/customerInfo?";
+        return "redirect:/bankingSystem/";
     }
 
     @GetMapping("/exchangeMoney")
@@ -213,22 +213,47 @@ public class ViewsController {
     @GetMapping("/openLoan")
     public String openLoan() { return "open-loan"; }
 
+    @GetMapping("/add-fixed-loan")
+    public String addFixedLoan(
+            @RequestParam Integer amountBorrowed,
+            @RequestParam String currencyCode,
+            @RequestParam String loanFor,
+            @RequestParam LocalDate startDate,
+            @RequestParam LocalDate endDate,
+            @RequestParam String customerEmbg,
+            @RequestParam Integer responsibleEmpId,
+            @RequestParam Boolean isFixed
+    ) {
+        viewsService.openLoan(amountBorrowed, currencyCode, loanFor, startDate, endDate, customerEmbg, responsibleEmpId, isFixed);
+        return "redirect:/bankingSystem/";
+    }
+
     @GetMapping("/payLoan")
     public String payLoan() { return "make-loan-transaction"; }
+
+    @PostMapping("/make-loan-transaction")
+    public String makeLoanTransaction(
+        @RequestParam LocalDate currentDateToPay,
+        @RequestParam Integer p_Amount,
+        @RequestParam Integer p_LoanId
+    ) {
+        viewsService.makeLoanTransaction(currentDateToPay, p_Amount, p_LoanId);
+        return "make-loan-transaction";
+    }
 
     @GetMapping("/generateExchangeRates")
     public String generateExchangeRates() { return "generate-exchange-rates"; }
 
-    @PostMapping("/generateExchangeRates")
-    public String generateExchangeRatesPost() {
-        viewsService.generateExchangeRatesForToday();
-        return "redirect:/bankingSystem/exchangeRatesToday";
-    }
+@PostMapping("/generateExchangeRates")
+public String generateExchangeRatesPost() {
+    viewsService.generateExchangeRatesForToday();
+    return "redirect:/bankingSystem/exchangeRatesToday";
+}
 
-    @GetMapping("/makeAtmTransaction")
-    public String makeAtmTransaction() { return "make-atm-transaction"; }
+@GetMapping("/makeAtmTransaction")
+public String makeAtmTransaction() { return "make-atm-transaction"; }
 
-    @GetMapping("/withdrawMoney")
-    public String withdrawMoney() { return "withdraw-exchange"; }
+@GetMapping("/withdrawMoney")
+public String withdrawMoney() { return "withdraw-exchange"; }
 
 }

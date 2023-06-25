@@ -19,10 +19,5 @@ public class Loanactivity {
   private long amountowed;
   private long interestrate;
   private boolean isfixedrate;
-  private String interesttype;
-  private Date rateeffectivefrom;
-  private Date rateeffectiveto;
-  private Date ratehistoryfrom;
-  private Date ratehistoryto;
 
 }
