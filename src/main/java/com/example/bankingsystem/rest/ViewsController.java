@@ -118,7 +118,7 @@ public class ViewsController {
                              @RequestParam("branchId") int branchId) {
         String accountNumber = viewsService.addAccount(accountType, balance, customerEmbg, currencyCode, branchId);
         System.out.println(accountNumber);
-        return "redirect:/bankingSystem/customerAccounts?customerId=1";
+        return "redirect:/bankingSystem/";
     }
 
     @GetMapping("/addOnlineBanking")
@@ -247,6 +247,14 @@ public class ViewsController {
     @GetMapping("/withdrawMoney")
     public String withdrawMoney() {
         return "withdraw-exchange";
+    }
+
+    @PostMapping("/withdraw-foreign-exchange")
+    public String withdrawMoney(@RequestParam("amountToExchange") BigDecimal amountToExchange,
+                                     @RequestParam("currencyCode") String currencyCode,
+                                     @RequestParam("accountNumberFrom") String accountNumberFrom) {
+        viewsService.withdrawMoney(amountToExchange, currencyCode, accountNumberFrom);
+        return "redirect:/bankingSystem/";
     }
 
 }

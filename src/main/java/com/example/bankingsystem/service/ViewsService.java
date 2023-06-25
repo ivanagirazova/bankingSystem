@@ -417,4 +417,8 @@ public class ViewsService {
     public void makeAtmTransaction(String p_type, String p_cardNumber, String p_ccv, int p_atmId, BigDecimal p_amount, int p_currencyIdOfUser) {
         jdbcTemplate.update("CALL makeatmtransaction(?, ?, ?, ?, ?, ?)", p_type, p_cardNumber, p_ccv, p_atmId, p_amount, p_currencyIdOfUser);
     }
+
+    public void withdrawMoney(BigDecimal amountToExchange, String currencyCode, String accountNumberFrom) {
+        jdbcTemplate.update("CALL withdrawforeignexchangetransaction(?, ?, ?)", amountToExchange, currencyCode, accountNumberFrom);
+    }
 }
