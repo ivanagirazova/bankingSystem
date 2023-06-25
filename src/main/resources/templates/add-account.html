@@ -13,8 +13,25 @@
     <h2>Add Account</h2>
     <form action="/bankingSystem/add-account" method="post">
       <div class="form-group">
-        <label for="accountType">Account Type:</label>
-        <input type="text" class="form-control" id="accountType" name="accountType" required>
+        <label class="form-check-label" for="radio1">Account Type:</label>
+        <div class="form-check">
+          <input type="radio" class="form-check-input" id="radio1" name="accountType" value="Checking Account">Checking Account
+        </div>
+        <div class="form-check">
+          <input type="radio" class="form-check-input" id="radio2" name="accountType" value="Savings Account">Savings Account
+        </div>
+        <div class="form-check">
+          <input type="radio" class="form-check-input" id="radio3" name="accountType" value="Deposits Account">Deposits Account
+        </div>
+        <div class="form-check">
+          <input type="radio" class="form-check-input" id="radio4" name="accountType" value="Retirement Account">Retirement Account
+        </div>
+        <div class="form-check">
+          <input type="radio" class="form-check-input" id="radio5" name="accountType" value="Business Account">Business Account
+        </div>
+        <div class="form-check">
+          <input type="radio" class="form-check-input" id="radio6" name="accountType" value="Loan Account">Loan Account
+        </div>
       </div>
       <div class="form-group">
         <label for="balance">Balance:</label>

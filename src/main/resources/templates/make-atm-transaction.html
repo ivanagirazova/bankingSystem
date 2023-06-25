@@ -13,8 +13,13 @@
     <h2>Make ATM Transaction</h2>
     <form action="/bankingSystem/make-atm-transaction" method="post">
       <div class="form-group">
-        <label for="p_Type">Transaction Type:</label>
-        <input type="text" class="form-control" id="p_Type" name="p_Type" required>
+        <label class="form-check-label" for="radio1">Transaction Type:</label>
+        <div class="form-check">
+          <input type="radio" class="form-check-input" id="radio1" name="p_Type" value="Deposit">Deposit
+        </div>
+        <div class="form-check">
+          <input type="radio" class="form-check-input" id="radio2" name="p_Type" value="Withdrawal">Withdrawal
+        </div>
       </div>
       <div class="form-group">
         <label for="p_CardNumber">Card Number:</label>
