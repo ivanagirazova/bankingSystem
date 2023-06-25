@@ -335,22 +335,20 @@ public class ViewsService {
         });
     }
 
+    // PROCEDURI
     public void makeForeignExchangeTransaction(Integer amount, String accountFrom, String accountTo) {
         jdbcTemplate.update("    CALL MakeForeignExchangeTransaction(?, ?, ?);",
                 amount, accountFrom, accountTo);
     }
 
-    //key constraint
     public void createOnlineBanking(String embg, String username, String password) {
         jdbcTemplate.update("CALL createonlinebanking(?, ?, ?)", embg, username, password);
     }
 
-    // PORCEDURI
     public void addCustomer(String embg, String firstName, String lastName, LocalDate dob, String city, String address, String email, String phoneNumber) {
         jdbcTemplate.update("CALL AddCustomer(?, ?, ?, ?, ?, ?, ?, ?)", embg, firstName, lastName, dob, city, address, email, phoneNumber);
     }
 
-    // NE RABOTI
     public String addAccount(String accountType, BigDecimal balance, String customerEmbg, String currencyCode, int branchId) {
 
         MapSqlParameterSource params = new MapSqlParameterSource();
@@ -363,7 +361,6 @@ public class ViewsService {
         return namedParameterJdbcTemplate.query("SELECT addaccount(:p_AccountType, :p_Balance, :p_CustomerEmbg, :p_CurrencyCode, :p_BranchId)", params, (rs, numRows) -> rs.getString("addaccount")).get(0);
     }
 
-    // RABOTI
     public void addCard(String cardType, String accountNumber) {
         jdbcTemplate.update("CALL createcard(?, ?)", cardType, accountNumber);
     }
