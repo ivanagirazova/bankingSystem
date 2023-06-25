@@ -111,13 +111,15 @@ public class ViewsController {
     }
 
     @PostMapping("/add-account")
-    public String addAccount(@RequestParam("accountType") String accountType,
-                             @RequestParam("balance") BigDecimal balance,
-                             @RequestParam("customerEmbg") String customerEmbg,
-                             @RequestParam("currencyCode") String currencyCode,
-                             @RequestParam("branchId") int branchId) {
-        viewsService.addAccount(accountType, balance, customerEmbg, currencyCode, branchId);
-        return "redirect:/bankingSystem/customerAccounts?";
+    public String addAccount(
+            @RequestParam("accountType") String accountType,
+            @RequestParam("balance") BigDecimal balance,
+            @RequestParam("customerEmbg") String customerEmbg,
+            @RequestParam("currencyCode") String currencyCode,
+            @RequestParam("branchId") int branchId) {
+        String accountNumber = viewsService.addAccount(accountType, balance, customerEmbg, currencyCode, branchId);
+        System.out.println(accountNumber);
+        return "redirect:/bankingSystem/customerAccounts?customerId=1";
     }
 
     @GetMapping("/addOnlineBanking")
@@ -169,7 +171,7 @@ public class ViewsController {
         return "make-account-transaction";
     }
 
-    @PostMapping("/make-account-transaction")
+    @GetMapping("/make-account-transaction")
     public String makeTransaction(
         @RequestParam("type") String type,
         @RequestParam("date") LocalDate date,
@@ -177,7 +179,7 @@ public class ViewsController {
         @RequestParam("accountNumberFrom") String accountNumberFrom,
         @RequestParam("accountNumberTo") String accountNumberTo) {
             viewsService.makeTransaction(type, date, amount, accountNumberFrom, accountNumberTo);
-            return "redirect:/bankingSystem/customerInfo?";
+            return "redirect:/bankingSystem/";
     }
 
     @GetMapping("/addEmployeeToBranch")
@@ -186,17 +188,27 @@ public class ViewsController {
     }
 
     @PostMapping("/add-employee-to-branch")
-    public String addEmployeeToBranch(@RequestParam("p_JobTitle") String p_JobTitle,
+    public String addEmployeeToBranch(
+            @RequestParam("p_JobTitle") String p_JobTitle,
             @RequestParam("p_IsManager") Boolean p_IsManager,
-                          @RequestParam("p_ManagedBy") int p_ManagedBy,
-                                  @RequestParam("p_BranchId") int p_BranchId,
-                                  @RequestParam("p_UserEmbg") String p_UserEmbg) {
+            @RequestParam("p_ManagedBy") int p_ManagedBy,
+            @RequestParam("p_BranchId") int p_BranchId,
+            @RequestParam("p_UserEmbg") String p_UserEmbg) {
         viewsService.addEmployeeToBranch(p_JobTitle, p_IsManager, p_ManagedBy, p_BranchId, p_UserEmbg);
         return "redirect:/bankingSystem/customerInfo?";
     }
 
     @GetMapping("/exchangeMoney")
     public String exchangeMoney() { return "exchange-money"; }
+
+    @GetMapping("/make-foreign-exchange-transaction")
+    public String exchangeMoneySubmit(
+            @RequestParam("amountToExchange") Integer amountToExchange,
+            @RequestParam("accountNumberFrom") String accountNumberFrom,
+            @RequestParam("accountNumberTo") String accountNumberTo) {
+        viewsService.makeForeignExchangeTransaction(amountToExchange, accountNumberFrom, accountNumberTo);
+        return "redirect:/bankingSystem/";
+    }
 
     @GetMapping("/openLoan")
     public String openLoan() { return "open-loan"; }
@@ -206,6 +218,12 @@ public class ViewsController {
 
     @GetMapping("/generateExchangeRates")
     public String generateExchangeRates() { return "generate-exchange-rates"; }
+
+    @PostMapping("/generateExchangeRates")
+    public String generateExchangeRatesPost() {
+        viewsService.generateExchangeRatesForToday();
+        return "redirect:/bankingSystem/exchangeRatesToday";
+    }
 
     @GetMapping("/makeAtmTransaction")
     public String makeAtmTransaction() { return "make-atm-transaction"; }

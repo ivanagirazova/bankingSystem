@@ -369,19 +369,32 @@ public class ViewsService {
         });
     }
 
+    public void makeForeignExchangeTransaction(Integer amount, String accountFrom, String accountTo) {
+        jdbcTemplate.update("    CALL MakeForeignExchangeTransaction(?, ?, ?);",
+                amount, accountFrom, accountTo);
+    }
+
     //key constraint
     public void createOnlineBanking(String embg, String username, String password) {
         jdbcTemplate.update("CALL createonlinebanking(?, ?, ?)", embg, username, password);
     }
 
-    // PORCEDURI - NE RABOTAT
+    // PORCEDURI
     public void addCustomer(String embg, String firstName, String lastName, LocalDate dob, String city, String address, String email, String phoneNumber) {
         jdbcTemplate.update("CALL AddCustomer(?, ?, ?, ?, ?, ?, ?, ?)", embg, firstName, lastName, dob, city, address, email, phoneNumber);
     }
 
     // NE RABOTI
-    public void addAccount(String accountType, BigDecimal balance, String customerEmbg, String currencyCode, int branchId) {
-        jdbcTemplate.update("CALL addaccount(?, ?, ?, ?, ?)", accountType, balance, customerEmbg, currencyCode, branchId);
+    public String addAccount(String accountType, BigDecimal balance, String customerEmbg, String currencyCode, int branchId) {
+
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("p_AccountType", accountType);
+        params.addValue("p_Balance", balance);
+        params.addValue("p_CustomerEmbg", customerEmbg);
+        params.addValue("p_CurrencyCode", currencyCode);
+        params.addValue("p_BranchId", branchId);
+
+        return namedParameterJdbcTemplate.query("SELECT addaccount(:p_AccountType, :p_Balance, :p_CustomerEmbg, :p_CurrencyCode, :p_BranchId)", params, (rs, numRows) -> rs.getString("addaccount")).get(0);
     }
 
     // RABOTI
@@ -395,5 +408,9 @@ public class ViewsService {
 
     public void addEmployeeToBranch(String p_jobTitle, Boolean p_isManager, int p_managedBy, int p_branchId, String p_userEmbg) {
         jdbcTemplate.update("CALL addemployeetobranch(?, ?, ?, ?, ?)", p_jobTitle, p_isManager, p_managedBy, p_branchId, p_userEmbg);
+    }
+
+    public void generateExchangeRatesForToday() {
+        jdbcTemplate.update("CALL GenerateExchangeRatesForToday();");
     }
 }
