@@ -1,5 +1,6 @@
 package com.example.bankingsystem.rest;
 
+import com.example.bankingsystem.configuration.RoutingWith;
 import com.example.bankingsystem.service.ViewsService;
 import com.example.bankingsystem.views.Allaccounttransactions;
 import lombok.AllArgsConstructor;
@@ -28,6 +29,7 @@ public class ViewsController {
     // VIEWS
     // da se proveri paginacija
     @GetMapping("/allAccountTransactions")
+    @RoutingWith("slaveDataSource")
     public String getMyViewData(
             @RequestParam int accountId,
             @RequestParam(defaultValue = "1") int page,
@@ -64,54 +66,63 @@ public class ViewsController {
     }
 
     @GetMapping("/branchAndAtmLocations")
+    @RoutingWith("slaveDataSource")
     public String getBranchAndAtmLocations(Model model) {
         model.addAttribute("locations", viewsService.getBranchAndAtmLocations());
         return "branch-and-atm-locations";
     }
 
     @GetMapping("/branchEmployees")
+    @RoutingWith("slaveDataSource")
     public String getBranchEmployees(@RequestParam int branchId, Model model) {
         model.addAttribute("employees", viewsService.getBranchEmployees(branchId));
         return "branch-employees";
     }
 
     @GetMapping("/cardAtmTransactions")
+    @RoutingWith("slaveDataSource")
     public String getCardAtmTransactions(@RequestParam int cardId, Model model) {
         model.addAttribute("cardTransactions", viewsService.getCardAtmTransactions(cardId));
         return "card-atm-transactions";
     }
 
     @GetMapping("/customerAccounts")
+    @RoutingWith("slaveDataSource")
     public String getCustomerAccounts(@RequestParam int customerId, Model model) {
         model.addAttribute("customerAccounts", viewsService.getCustomerAccounts(customerId));
         return "customer-accounts";
     }
 
     @GetMapping("/customerInfo")
+    @RoutingWith("slaveDataSource")
     public String getCustomerInfo(@RequestParam String embg, Model model) {
         model.addAttribute("customer", viewsService.getCustomerInfo(embg).get(0));
         return "customer-info";
     }
 
     @GetMapping("/employeeContactInfo")
+    @RoutingWith("slaveDataSource")
     public String getEmployeeContactInfo(@RequestParam String embg, Model model) {
         model.addAttribute("employee", viewsService.getEmployeeContactInfo(embg).get(0));
         return "employee-contact-info";
     }
 
     @GetMapping("/exchangeRatesToday")
+    @RoutingWith("slaveDataSource")
     public String getExchangeRatesToday(Model model) {
         model.addAttribute("exchangeRates", viewsService.getExchangeRatesToday());
         return "exchange-rates-today";
     }
 
     @GetMapping("/foreignExchangeTransactions")
+    @RoutingWith("slaveDataSource")
     public String getForeignExchangeTransactions(@RequestParam int accountId, Model model) {
         model.addAttribute("transactions", viewsService.getForeignExchangeTransactions(accountId));
         return "foreign-exchange-transactions";
     }
 
     @GetMapping("/loanActivity")
+    @RoutingWith("slaveDataSource")
     public String getLoanActivity(@RequestParam int loanId, Model model) {
         model.addAttribute("loanActivity", viewsService.getLoanActivity(loanId));
         return "loan-activity";
@@ -355,5 +366,4 @@ public class ViewsController {
             return "failure";
         }
     }
-
 }
