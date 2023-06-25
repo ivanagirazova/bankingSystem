@@ -111,12 +111,11 @@ public class ViewsController {
     }
 
     @PostMapping("/add-account")
-    public String addAccount(
-            @RequestParam("accountType") String accountType,
-            @RequestParam("balance") BigDecimal balance,
-            @RequestParam("customerEmbg") String customerEmbg,
-            @RequestParam("currencyCode") String currencyCode,
-            @RequestParam("branchId") int branchId) {
+    public String addAccount(@RequestParam("accountType") String accountType,
+                             @RequestParam("balance") BigDecimal balance,
+                             @RequestParam("customerEmbg") String customerEmbg,
+                             @RequestParam("currencyCode") String currencyCode,
+                             @RequestParam("branchId") int branchId) {
         String accountNumber = viewsService.addAccount(accountType, balance, customerEmbg, currencyCode, branchId);
         System.out.println(accountNumber);
         return "redirect:/bankingSystem/customerAccounts?customerId=1";
@@ -132,7 +131,7 @@ public class ViewsController {
                                       @RequestParam("p_Username") String username,
                                       @RequestParam("p_Password") String password) {
         viewsService.createOnlineBanking(embg, username, password);
-        return "redirect:/bankingSystem/addOnlineBanking";
+        return "redirect:/bankingSystem/";
     }
 
     @GetMapping("/addClient")
@@ -141,17 +140,16 @@ public class ViewsController {
     }
 
     @GetMapping("/add-customer")
-    public String addCustomer(
-        @RequestParam("embg") String embg,
-        @RequestParam("firstname") String firstname,
-        @RequestParam("lastname") String lastname,
-        @RequestParam("dateofbirth") LocalDate dateofbirth,
-        @RequestParam("city") String city,
-        @RequestParam("address") String address,
-        @RequestParam("email") String email,
-        @RequestParam("phonenumber") String phonenumber) {
-            viewsService.addCustomer(embg, firstname, lastname, dateofbirth, city, address, email, phonenumber);
-            return "redirect:/bankingSystem/customerInfo?embg=" + embg;
+    public String addCustomer(@RequestParam("embg") String embg,
+                              @RequestParam("firstname") String firstname,
+                              @RequestParam("lastname") String lastname,
+                              @RequestParam("dateofbirth") LocalDate dateofbirth,
+                              @RequestParam("city") String city,
+                              @RequestParam("address") String address,
+                              @RequestParam("email") String email,
+                              @RequestParam("phonenumber") String phonenumber) {
+        viewsService.addCustomer(embg, firstname, lastname, dateofbirth, city, address, email, phonenumber);
+        return "redirect:/bankingSystem/customerInfo?embg=" + embg;
     }
 
     @GetMapping("/addCard")
@@ -172,14 +170,13 @@ public class ViewsController {
     }
 
     @GetMapping("/make-account-transaction")
-    public String makeTransaction(
-        @RequestParam("type") String type,
-        @RequestParam("date") LocalDate date,
-        @RequestParam("amount") BigDecimal amount,
-        @RequestParam("accountNumberFrom") String accountNumberFrom,
-        @RequestParam("accountNumberTo") String accountNumberTo) {
-            viewsService.makeTransaction(type, date, amount, accountNumberFrom, accountNumberTo);
-            return "redirect:/bankingSystem/";
+    public String makeTransaction(@RequestParam("type") String type,
+                                  @RequestParam("date") LocalDate date,
+                                  @RequestParam("amount") BigDecimal amount,
+                                  @RequestParam("accountNumberFrom") String accountNumberFrom,
+                                  @RequestParam("accountNumberTo") String accountNumberTo) {
+        viewsService.makeTransaction(type, date, amount, accountNumberFrom, accountNumberTo);
+        return "redirect:/bankingSystem/";
     }
 
     @GetMapping("/addEmployeeToBranch")
@@ -188,36 +185,42 @@ public class ViewsController {
     }
 
     @PostMapping("/add-employee-to-branch")
-    public String addEmployeeToBranch(
-            @RequestParam("p_JobTitle") String p_JobTitle,
-            @RequestParam("p_IsManager") Boolean p_IsManager,
-            @RequestParam("p_ManagedBy") int p_ManagedBy,
-            @RequestParam("p_BranchId") int p_BranchId,
-            @RequestParam("p_UserEmbg") String p_UserEmbg) {
+    public String addEmployeeToBranch(@RequestParam("p_JobTitle") String p_JobTitle,
+                                      @RequestParam("p_IsManager") Boolean p_IsManager,
+                                      @RequestParam("p_ManagedBy") int p_ManagedBy,
+                                      @RequestParam("p_BranchId") int p_BranchId,
+                                      @RequestParam("p_UserEmbg") String p_UserEmbg) {
         viewsService.addEmployeeToBranch(p_JobTitle, p_IsManager, p_ManagedBy, p_BranchId, p_UserEmbg);
-        return "redirect:/bankingSystem/customerInfo?";
+        return "redirect:/bankingSystem/";
     }
 
     @GetMapping("/exchangeMoney")
-    public String exchangeMoney() { return "exchange-money"; }
+    public String exchangeMoney() {
+        return "exchange-money";
+    }
 
     @GetMapping("/make-foreign-exchange-transaction")
-    public String exchangeMoneySubmit(
-            @RequestParam("amountToExchange") Integer amountToExchange,
-            @RequestParam("accountNumberFrom") String accountNumberFrom,
-            @RequestParam("accountNumberTo") String accountNumberTo) {
+    public String exchangeMoneySubmit(@RequestParam("amountToExchange") Integer amountToExchange,
+                                      @RequestParam("accountNumberFrom") String accountNumberFrom,
+                                      @RequestParam("accountNumberTo") String accountNumberTo) {
         viewsService.makeForeignExchangeTransaction(amountToExchange, accountNumberFrom, accountNumberTo);
         return "redirect:/bankingSystem/";
     }
 
     @GetMapping("/openLoan")
-    public String openLoan() { return "open-loan"; }
+    public String openLoan() {
+        return "open-loan";
+    }
 
     @GetMapping("/payLoan")
-    public String payLoan() { return "make-loan-transaction"; }
+    public String payLoan() {
+        return "make-loan-transaction";
+    }
 
     @GetMapping("/generateExchangeRates")
-    public String generateExchangeRates() { return "generate-exchange-rates"; }
+    public String generateExchangeRates() {
+        return "generate-exchange-rates";
+    }
 
     @PostMapping("/generateExchangeRates")
     public String generateExchangeRatesPost() {
@@ -226,9 +229,24 @@ public class ViewsController {
     }
 
     @GetMapping("/makeAtmTransaction")
-    public String makeAtmTransaction() { return "make-atm-transaction"; }
+    public String makeAtmTransaction() {
+        return "make-atm-transaction";
+    }
+
+    @PostMapping("/make-atm-transaction")
+    public String makeAtmTransaction(@RequestParam("p_Type") String p_Type,
+                                     @RequestParam("p_CardNumber") String p_CardNumber,
+                                     @RequestParam("p_CCV") String p_CCV,
+                                     @RequestParam("p_AtmId") int p_AtmId,
+                                     @RequestParam("p_Amount") BigDecimal p_Amount,
+                                     @RequestParam("p_CurrencyIdOfUser") int p_CurrencyIdOfUser) {
+        viewsService.makeAtmTransaction(p_Type, p_CardNumber, p_CCV, p_AtmId, p_Amount, p_CurrencyIdOfUser);
+        return "redirect:/bankingSystem/";
+    }
 
     @GetMapping("/withdrawMoney")
-    public String withdrawMoney() { return "withdraw-exchange"; }
+    public String withdrawMoney() {
+        return "withdraw-exchange";
+    }
 
 }
