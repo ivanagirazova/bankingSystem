@@ -155,19 +155,9 @@ public class ViewsService {
 
     public List<Customeraccounts> getCustomerAccounts(int customerId) {
         String sql = """
-                SELECT cust.id AS customerid,
-                       a.id    AS accountid,
-                       a.accountnumber,
-                       a.accounttype,
-                       a.balance,
-                       c.id    AS cardid,
-                       c.cardnumber,
-                       c.cardtype,
-                       c.expiredate
-                FROM account a
-                         JOIN card c ON a.id = c.accountid
-                         JOIN customer cust ON a.customerid = cust.id
-                WHERE cust.id = :customerId;
+                SELECT *
+                FROM customeraccounts
+                WHERE customerid = :customerId;
                 """;
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("customerId", customerId);
