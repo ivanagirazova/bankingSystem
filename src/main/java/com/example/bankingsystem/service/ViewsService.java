@@ -169,6 +169,7 @@ public class ViewsService {
             data.setAccounttype(rs.getString("accounttype"));
             data.setBalance(rs.getDouble("balance"));
             data.setCardid(rs.getLong("cardid"));
+            data.setCurrencyCode(rs.getString("currencyCode"));
             data.setCardnumber(rs.getString("cardnumber"));
             data.setCardtype(rs.getString("cardtype"));
             data.setExpiredate(rs.getDate("expiredate"));
@@ -399,8 +400,8 @@ public class ViewsService {
         jdbcTemplate.update("CALL MakeLoanTransaction(?, ?, ?);", date, amount, loanId);
     }
 
-    public void makeAtmTransaction(String p_type, String p_cardNumber, String p_ccv, int p_atmId, BigDecimal p_amount, int p_currencyIdOfUser) {
-        jdbcTemplate.update("CALL makeatmtransaction(?, ?, ?, ?, ?, ?)", p_type, p_cardNumber, p_ccv, p_atmId, p_amount, p_currencyIdOfUser);
+    public void makeAtmTransaction(String p_type, String p_cardNumber, String p_ccv, int p_atmId, BigDecimal p_amount) {
+        jdbcTemplate.update("CALL makeatmtransaction(?, ?, ?, ?, ?)", p_type, p_cardNumber, p_ccv, p_atmId, p_amount);
     }
 
     public void withdrawMoney(BigDecimal amountToExchange, String currencyCode, String accountNumberFrom) {

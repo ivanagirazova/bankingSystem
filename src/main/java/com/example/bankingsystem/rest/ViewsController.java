@@ -263,9 +263,8 @@ public String generateExchangeRatesPost() {
                                      @RequestParam("p_CardNumber") String p_CardNumber,
                                      @RequestParam("p_CCV") String p_CCV,
                                      @RequestParam("p_AtmId") int p_AtmId,
-                                     @RequestParam("p_Amount") BigDecimal p_Amount,
-                                     @RequestParam("p_CurrencyIdOfUser") int p_CurrencyIdOfUser) {
-        viewsService.makeAtmTransaction(p_Type, p_CardNumber, p_CCV, p_AtmId, p_Amount, p_CurrencyIdOfUser);
+                                     @RequestParam("p_Amount") BigDecimal p_Amount) {
+        viewsService.makeAtmTransaction(p_Type, p_CardNumber, p_CCV, p_AtmId, p_Amount);
         return "redirect:/bankingSystem/";
     }
 

@@ -15,6 +15,7 @@ public class Customeraccounts {
   private String accounttype;
   private double balance;
   private long cardid;
+  private String currencyCode;
   private String cardnumber;
   private String cardtype;
   private Date expiredate;

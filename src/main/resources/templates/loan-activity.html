@@ -10,9 +10,12 @@
 <body>
     <div th:include="navbar.html"></div>
     <div class="container">
-        <h1>Loan Activity for Loan </h1>
-        <h4>amount borrowed: <span th:text="${loanActivity.get(0).amountborrowed}"></span></h4>
-        <h4>amount owed: <span th:text="${loanActivity.get(0).amountowed}"></span></h4>
+        <span th:if="${loanActivity.size() > 0}">
+            <h1>Loan Activity for Loan </h1>
+            <h4>amount borrowed: <span th:text="${loanActivity.get(0).amountborrowed}"></span></h4>
+            <h4>amount owed: <span th:text="${loanActivity.get(0).amountowed}"></span></h4>
+        </span>
+
         <table class="table table-bordered">
             <thead>
             <tr>
