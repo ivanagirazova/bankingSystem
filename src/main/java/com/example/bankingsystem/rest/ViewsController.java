@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,6 +25,7 @@ public class ViewsController {
 
     private final ViewsService viewsService;
 
+    // VIEWS
     // da se proveri paginacija
     @GetMapping("/allAccountTransactions")
     public String getMyViewData(
@@ -49,6 +51,16 @@ public class ViewsController {
     @GetMapping("/")
     public String getNavbar() {
         return "navbar";
+    }
+
+    @GetMapping("/success")
+    public String getSuccess() {
+        return "success";
+    }
+
+    @GetMapping("/failure")
+    public String getFailure(@ModelAttribute("error") String error) {
+        return "failure";
     }
 
     @GetMapping("/branchAndAtmLocations")
@@ -105,6 +117,7 @@ public class ViewsController {
         return "loan-activity";
     }
 
+    // PROCEDURI
     @GetMapping("/addAccount")
     public String addAccount() {
         return "add-account";
@@ -115,10 +128,16 @@ public class ViewsController {
                              @RequestParam("balance") BigDecimal balance,
                              @RequestParam("customerEmbg") String customerEmbg,
                              @RequestParam("currencyCode") String currencyCode,
-                             @RequestParam("branchId") int branchId) {
-        String accountNumber = viewsService.addAccount(accountType, balance, customerEmbg, currencyCode, branchId);
-        System.out.println(accountNumber);
-        return "redirect:/bankingSystem/";
+                             @RequestParam("branchId") int branchId,
+                             Model model) {
+        try {
+            String accountNumber = viewsService.addAccount(accountType, balance, customerEmbg, currencyCode, branchId);
+            System.out.println(accountNumber);
+            return "success";
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+            return "failure";
+        }
     }
 
     @GetMapping("/addOnlineBanking")
@@ -129,9 +148,15 @@ public class ViewsController {
     @PostMapping("/create-online-banking")
     public String createOnlineBanking(@RequestParam("p_UserEmbg") String embg,
                                       @RequestParam("p_Username") String username,
-                                      @RequestParam("p_Password") String password) {
-        viewsService.createOnlineBanking(embg, username, password);
-        return "redirect:/bankingSystem/";
+                                      @RequestParam("p_Password") String password,
+                                      Model model) {
+        try {
+            viewsService.createOnlineBanking(embg, username, password);
+            return "success";
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+            return "failure";
+        }
     }
 
     @GetMapping("/addClient")
@@ -147,9 +172,15 @@ public class ViewsController {
                               @RequestParam("city") String city,
                               @RequestParam("address") String address,
                               @RequestParam("email") String email,
-                              @RequestParam("phonenumber") String phonenumber) {
-        viewsService.addCustomer(embg, firstname, lastname, dateofbirth, city, address, email, phonenumber);
-        return "redirect:/bankingSystem/customerInfo?embg=" + embg;
+                              @RequestParam("phonenumber") String phonenumber,
+                              Model model) {
+        try {
+            viewsService.addCustomer(embg, firstname, lastname, dateofbirth, city, address, email, phonenumber);
+            return "success";
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+            return "failure";
+        }
     }
 
     @GetMapping("/addCard")
@@ -159,9 +190,15 @@ public class ViewsController {
 
     @PostMapping("/add-card")
     public String addCard(@RequestParam("cardType") String cardType,
-                          @RequestParam("accountNumber") String accountNumber) {
-        viewsService.addCard(cardType, accountNumber);
-        return "redirect:/bankingSystem/";
+                          @RequestParam("accountNumber") String accountNumber,
+                          Model model) {
+        try {
+            viewsService.addCard(cardType, accountNumber);
+            return "success";
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+            return "failure";
+        }
     }
 
     @GetMapping("/makeTransaction")
@@ -174,9 +211,15 @@ public class ViewsController {
                                   @RequestParam("date") LocalDate date,
                                   @RequestParam("amount") BigDecimal amount,
                                   @RequestParam("accountNumberFrom") String accountNumberFrom,
-                                  @RequestParam("accountNumberTo") String accountNumberTo) {
-        viewsService.makeTransaction(type, date, amount, accountNumberFrom, accountNumberTo);
-        return "redirect:/bankingSystem/";
+                                  @RequestParam("accountNumberTo") String accountNumberTo,
+                                  Model model) {
+        try {
+            viewsService.makeTransaction(type, date, amount, accountNumberFrom, accountNumberTo);
+            return "success";
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+            return "failure";
+        }
     }
 
     @GetMapping("/addEmployeeToBranch")
@@ -189,9 +232,15 @@ public class ViewsController {
                                       @RequestParam("p_IsManager") Boolean p_IsManager,
                                       @RequestParam("p_ManagedBy") int p_ManagedBy,
                                       @RequestParam("p_BranchId") int p_BranchId,
-                                      @RequestParam("p_UserEmbg") String p_UserEmbg) {
-        viewsService.addEmployeeToBranch(p_JobTitle, p_IsManager, p_ManagedBy, p_BranchId, p_UserEmbg);
-        return "redirect:/bankingSystem/";
+                                      @RequestParam("p_UserEmbg") String p_UserEmbg,
+                                      Model model) {
+        try {
+            viewsService.addEmployeeToBranch(p_JobTitle, p_IsManager, p_ManagedBy, p_BranchId, p_UserEmbg);
+            return "success";
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+            return "failure";
+        }
     }
 
     @GetMapping("/exchangeMoney")
@@ -202,9 +251,15 @@ public class ViewsController {
     @GetMapping("/make-foreign-exchange-transaction")
     public String exchangeMoneySubmit(@RequestParam("amountToExchange") Integer amountToExchange,
                                       @RequestParam("accountNumberFrom") String accountNumberFrom,
-                                      @RequestParam("accountNumberTo") String accountNumberTo) {
-        viewsService.makeForeignExchangeTransaction(amountToExchange, accountNumberFrom, accountNumberTo);
-        return "redirect:/bankingSystem/";
+                                      @RequestParam("accountNumberTo") String accountNumberTo,
+                                      Model model) {
+        try {
+            viewsService.makeForeignExchangeTransaction(amountToExchange, accountNumberFrom, accountNumberTo);
+            return "success";
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+            return "failure";
+        }
     }
 
     @GetMapping("/openLoan")
@@ -213,18 +268,22 @@ public class ViewsController {
     }
 
     @GetMapping("/add-fixed-loan")
-    public String addFixedLoan(
-            @RequestParam Integer amountBorrowed,
-            @RequestParam String currencyCode,
-            @RequestParam String loanFor,
-            @RequestParam LocalDate startDate,
-            @RequestParam LocalDate endDate,
-            @RequestParam String customerEmbg,
-            @RequestParam Integer responsibleEmpId,
-            @RequestParam Boolean isFixed
-    ) {
-        viewsService.openLoan(amountBorrowed, currencyCode, loanFor, startDate, endDate, customerEmbg, responsibleEmpId, isFixed);
-        return "redirect:/bankingSystem/";
+    public String addFixedLoan(@RequestParam Integer amountBorrowed,
+                               @RequestParam String currencyCode,
+                               @RequestParam String loanFor,
+                               @RequestParam LocalDate startDate,
+                               @RequestParam LocalDate endDate,
+                               @RequestParam String customerEmbg,
+                               @RequestParam Integer responsibleEmpId,
+                               @RequestParam Boolean isFixed,
+                               Model model) {
+        try {
+            viewsService.openLoan(amountBorrowed, currencyCode, loanFor, startDate, endDate, customerEmbg, responsibleEmpId, isFixed);
+            return "success";
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+            return "failure";
+        }
     }
 
     @GetMapping("/payLoan")
@@ -233,13 +292,17 @@ public class ViewsController {
     }
 
     @PostMapping("/make-loan-transaction")
-    public String makeLoanTransaction(
-        @RequestParam LocalDate currentDateToPay,
-        @RequestParam Integer p_Amount,
-        @RequestParam Integer p_LoanId
-    ) {
-        viewsService.makeLoanTransaction(currentDateToPay, p_Amount, p_LoanId);
-        return "make-loan-transaction";
+    public String makeLoanTransaction(@RequestParam LocalDate currentDateToPay,
+                                      @RequestParam Integer p_Amount,
+                                      @RequestParam Integer p_LoanId,
+                                      Model model) {
+        try {
+            viewsService.makeLoanTransaction(currentDateToPay, p_Amount, p_LoanId);
+            return "success";
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+            return "failure";
+        }
     }
 
     @GetMapping("/generateExchangeRates")
@@ -247,11 +310,11 @@ public class ViewsController {
         return "generate-exchange-rates";
     }
 
-@PostMapping("/generateExchangeRates")
-public String generateExchangeRatesPost() {
-    viewsService.generateExchangeRatesForToday();
-    return "redirect:/bankingSystem/exchangeRatesToday";
-}
+    @PostMapping("/generateExchangeRates")
+    public String generateExchangeRatesPost() {
+        viewsService.generateExchangeRatesForToday();
+        return "redirect:/bankingSystem/exchangeRatesToday";
+    }
 
     @GetMapping("/makeAtmTransaction")
     public String makeAtmTransaction() {
@@ -263,9 +326,15 @@ public String generateExchangeRatesPost() {
                                      @RequestParam("p_CardNumber") String p_CardNumber,
                                      @RequestParam("p_CCV") String p_CCV,
                                      @RequestParam("p_AtmId") int p_AtmId,
-                                     @RequestParam("p_Amount") BigDecimal p_Amount) {
-        viewsService.makeAtmTransaction(p_Type, p_CardNumber, p_CCV, p_AtmId, p_Amount);
-        return "redirect:/bankingSystem/";
+                                     @RequestParam("p_Amount") BigDecimal p_Amount,
+                                     Model model) {
+        try {
+            viewsService.makeAtmTransaction(p_Type, p_CardNumber, p_CCV, p_AtmId, p_Amount);
+            return "success";
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+            return "failure";
+        }
     }
 
     @GetMapping("/withdrawMoney")
@@ -275,10 +344,16 @@ public String generateExchangeRatesPost() {
 
     @PostMapping("/withdraw-foreign-exchange")
     public String withdrawMoney(@RequestParam("amountToExchange") BigDecimal amountToExchange,
-                                     @RequestParam("currencyCode") String currencyCode,
-                                     @RequestParam("accountNumberFrom") String accountNumberFrom) {
-        viewsService.withdrawMoney(amountToExchange, currencyCode, accountNumberFrom);
-        return "redirect:/bankingSystem/";
+                                @RequestParam("currencyCode") String currencyCode,
+                                @RequestParam("accountNumberFrom") String accountNumberFrom,
+                                Model model) {
+        try {
+            viewsService.withdrawMoney(amountToExchange, currencyCode, accountNumberFrom);
+            return "success";
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+            return "failure";
+        }
     }
 
 }
